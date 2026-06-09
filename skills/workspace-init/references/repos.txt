@@ -1,0 +1,3 @@
+# name	                    type	url	                                                            branch                                  	eta_min
+aiclaim_upload          		app 	https://gitlab.jryzt.com/aiclaim-auto/aiclaim_upload.git	    aicode_0309_1.6.0	                        2
+ocspec-aiclaim          		kb  	https://gitlab.jryzt.com/ocss/ocspec-aiclaim.git	            aicode_aiclaim_knowledge	                2
