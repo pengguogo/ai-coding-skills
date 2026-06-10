@@ -5,7 +5,7 @@
 # 默认仓库/分支见脚本内 DEFAULT_REPO_URL / DEFAULT_BRANCH（可用参数覆盖）
 # 支持: Cursor / Kiro / Claude Code / OpenCode / Trae
 #
-# 用法（在 oc-coding-spec 仓库根目录执行）:
+# 用法（在 ai-coding-skills 仓库根目录执行）:
 #   bash e2e/workspace/spec-skills-refresh/script/spec-skills-refresh.sh
 #   bash e2e/workspace/spec-skills-refresh/script/spec-skills-refresh.sh --tool cursor --scope global --repo <URL> [--branch <分支>]
 #   bash e2e/workspace/spec-skills-refresh/script/spec-skills-refresh.sh --tool "cursor kiro" --scope project
@@ -16,11 +16,11 @@ set -e
 
 CONFIG_FILE="$HOME/.oc-skills-config"
 TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
-TEMP_DIR="/tmp/oc-coding-spec-$TIMESTAMP"
+TEMP_DIR="/tmp/ai-coding-skills-$TIMESTAMP"
 
 # 默认技能源（可被 ~/.oc-skills-config 或命令行覆盖）
-DEFAULT_REPO_URL="https://gitlab.jryzt.com/ocss-public/oc-coding-spec.git"
-DEFAULT_BRANCH="aicode_e2e"
+DEFAULT_REPO_URL="https://github.com/pengguogo/ai-coding-skills.git"
+DEFAULT_BRANCH="main"
 
 # 技能源目录（相对于 git 仓库根目录）
 SKILL_SOURCE_DIRS=(
@@ -310,7 +310,7 @@ sync_skill_dirs() {
         cp -r "$skill_dir"/. "$dest/"
         # 如果子目录内没有 SKILL.md，自动生成一个最小占位
         if [[ ! -f "$dest/SKILL.md" ]]; then
-          printf -- "---\\nname: %s\\ndescription: %s skill from oc-coding-spec\\n---\\n" \\
+          printf -- "---\\nname: %s\\ndescription: %s skill from ai-coding-skills\\n---\\n" \\
             "$skill_name" "$skill_name" > "$dest/SKILL.md"
         fi
         info "  ✓ $skill_name ← $dir"
@@ -344,7 +344,7 @@ print_targets() {
 main() {
   echo ""
   echo "============================================"
-  echo "  OC Coding Spec 技能自动更新工具"
+  echo "  AI Coding Skills 技能自动更新工具"
   echo "============================================"
 
   load_config

@@ -1,6 +1,6 @@
 ---
 name: spec-skills-refresh
-description: 从 git 拉取 oc-coding-spec 技能包（默认 GitLab 仓库、aicode_e2e 分支），并按所选工具与范围同步到全局或项目内的 AI 技能目录。
+description: 从 git 拉取 ai-coding-skills 技能包（默认 GitHub 仓库、main 分支），并按所选工具与范围同步到全局或项目内的 AI 技能目录。
 ---
 
 # 规范技能刷新（spec-skills-refresh）
@@ -31,8 +31,8 @@ description: 从 git 拉取 oc-coding-spec 技能包（默认 GitLab 仓库、ai
 
 ## 前置输入
 
-- **技能仓库 git URL**（默认 \`https://gitlab.jryzt.com/ocss-public/oc-coding-spec.git\`；交互时回车即用默认。若 \`~/.oc-skills-config\` 中已有 \`SAVED_REPO_URL\` 可复用）。
-- **分支**（默认 \`aicode_e2e\`；可用 \`--branch\` 覆盖；可写入配置文件 \`SAVED_BRANCH\`）。
+- **技能仓库 git URL**（默认 \`https://github.com/pengguogo/ai-coding-skills.git\`；交互时回车即用默认。若 \`~/.oc-skills-config\` 中已有 \`SAVED_REPO_URL\` 可复用）。
+- **分支**（默认 \`main\`；可用 \`--branch\` 覆盖；可写入配置文件 \`SAVED_BRANCH\`）。
 - **目标工具**（可多选）：Cursor、Kiro、Claude Code、OpenCode、Trae，或全部。
 - **更新范围**：\`global\`（全局）或 \`project\`（当前仓库为项目根）。
 - **环境**：可执行 Bash、\`git\` 可用；在仓库**根目录**执行脚本（项目范围时 \`pwd\` 须为该项目根）。
@@ -43,7 +43,7 @@ description: 从 git 拉取 oc-coding-spec 技能包（默认 GitLab 仓库、ai
 
 - **目标**：避免同步到错误目录或错误仓库。
 - **动作**：若 URL/工具/范围未通过参数传入，按下列项向用户确认（可与脚本交互提问一致）：
-  1. git 仓库地址（可直接回车使用脚本内默认 GitLab 地址）；
+  1. git 仓库地址（可直接回车使用脚本内默认 GitHub 地址）；
   2. 目标工具（对应编号 1–6，6 为全部）；
   3. 范围：全局 vs 当前项目。
 - **检查点**：仓库 URL、分支策略、工具与范围明确后再执行脚本。
@@ -61,8 +61,8 @@ bash e2e/workspace/spec-skills-refresh/script/spec-skills-refresh.sh
 bash e2e/workspace/spec-skills-refresh/script/spec-skills-refresh.sh \\
   --tool "cursor kiro claude opencode trae" \\
   --scope global \\
-  --repo https://gitlab.jryzt.com/ocss-public/oc-coding-spec.git \\
-  --branch aicode_e2e
+  --repo https://github.com/pengguogo/ai-coding-skills.git \\
+  --branch main
 \`\`\`
 
 - **检查点**：脚本以 0 退出；日志中出现 \`技能更新完成\`；若有 \`ERROR\` 则停止并向用户说明原因（网络、分支名、权限等）。

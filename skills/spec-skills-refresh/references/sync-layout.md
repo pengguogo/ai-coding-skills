@@ -41,8 +41,8 @@
 
 ## 环境与行为说明
 
-- **默认仓库**：\`https://gitlab.jryzt.com/ocss-public/oc-coding-spec.git\`（HTTPS 克隆建议带 \`.git\` 后缀）。
-- **默认分支**：\`aicode_e2e\`。脚本使用 \`git clone --depth=1 --branch <分支>\`；可用参数 \`--branch\` 覆盖；交互时仓库地址可直接回车采用默认 URL。
+- **默认仓库**：\`https://github.com/pengguogo/ai-coding-skills.git\`（HTTPS 克隆建议带 \`.git\` 后缀）。
+- **默认分支**：\`main\`。脚本使用 \`git clone --depth=1 --branch <分支>\`；可用参数 \`--branch\` 覆盖；交互时仓库地址可直接回车采用默认 URL。
 - **备份**：见上文「备份目录」；快照目录名 \`backup-YYYYMMDD_HHMMSS\`；超过 \`MAX_SKILL_BACKUPS\`（默认 3）时删除**最旧**快照。
 - **配置持久化**：\`~/.oc-skills-config\` 可保存 \`SAVED_REPO_URL\` 与 \`SAVED_BRANCH\`，后续可免填（仍可用命令行覆盖）。
 - **依赖**：本机需已安装 \`git\`；Bash 环境用于执行 \`script/spec-skills-refresh.sh\`（Git Bash / WSL / macOS / Linux）。
