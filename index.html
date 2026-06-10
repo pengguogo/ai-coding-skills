@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Coding Skills — 端到端 AI 辅助编码技能体系</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--sidebar-w:280px;--sidebar-bg:#1a1d23;--sidebar-hover:#2a2d35;--sidebar-active:#3b82f6;--content-bg:#f8f9fa;--card-bg:#fff;--text:#1f2937;--text-light:#6b7280;--accent:#3b82f6;--accent2:#8b5cf6;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--border:#e5e7eb;--code-bg:#f1f5f9}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans SC",sans-serif;color:var(--text);background:var(--content-bg);line-height:1.7;font-size:15px}
+.sidebar{position:fixed;top:0;left:0;width:var(--sidebar-w);height:100vh;background:var(--sidebar-bg);overflow-y:auto;z-index:100;transition:transform .3s}
+.sidebar-header{padding:24px 20px 16px;border-bottom:1px solid rgba(255,255,255,.08)}
+.sidebar-header h2{color:#fff;font-size:16px;font-weight:600;letter-spacing:.5px}
+.sidebar-header p{color:rgba(255,255,255,.45);font-size:12px;margin-top:4px}
+.sidebar nav{padding:8px 0}
+.sidebar nav a{display:block;padding:9px 20px;color:rgba(255,255,255,.65);text-decoration:none;font-size:13px;transition:all .2s;border-left:3px solid transparent}
+.sidebar nav a:hover{background:var(--sidebar-hover);color:#fff}
+.sidebar nav a.active{color:#fff;background:rgba(59,130,246,.12);border-left-color:var(--sidebar-active)}
+.sidebar nav .nav-group{padding:12px 20px 4px;color:rgba(255,255,255,.3);font-size:11px;text-transform:uppercase;letter-spacing:1px;font-weight:600}
+.github-link{display:flex;align-items:center;gap:8px;margin:16px 20px;padding:10px 16px;background:rgba(59,130,246,.15);border-radius:8px;color:#60a5fa;text-decoration:none;font-size:13px;font-weight:500;transition:all .2s;border:1px solid rgba(59,130,246,.2)}
+.github-link:hover{background:rgba(59,130,246,.25);color:#93c5fd}
+.github-link svg{width:18px;height:18px;fill:currentColor;flex-shrink:0}
+.main{margin-left:var(--sidebar-w);min-height:100vh}
+.content{max-width:1100px;margin:0 auto;padding:40px 48px}
+section{margin-bottom:64px}
+h1{font-size:32px;font-weight:700;color:var(--text);margin-bottom:8px}
+h2{font-size:24px;font-weight:700;color:var(--text);margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid var(--accent)}
+h3{font-size:18px;font-weight:600;color:var(--text);margin:24px 0 12px}
+h4{font-size:16px;font-weight:600;margin:16px 0 8px}
+p{margin-bottom:12px;color:var(--text)}
+.cover{text-align:center;padding:80px 0 60px}
+.cover h1{font-size:42px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:16px}
+.cover .subtitle{font-size:18px;color:var(--text-light);margin-bottom:40px}
+.cover .stats{display:flex;justify-content:center;gap:40px;margin-top:32px}
+.cover .stat{text-align:center}
+.cover .stat .num{font-size:36px;font-weight:700;color:var(--accent)}
+.cover .stat .label{font-size:13px;color:var(--text-light);margin-top:4px}
+.card{background:var(--card-bg);border-radius:12px;padding:28px;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,.06);border:1px solid var(--border)}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;margin:20px 0}
+.card-grid .card{margin-bottom:0}
+.skill-tag{display:inline-block;padding:3px 10px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;margin:2px}
+.skill-tag:hover{transform:translateY(-1px);box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.skill-tag.blue{background:#eff6ff;color:#2563eb;border-color:#bfdbfe}
+.skill-tag.purple{background:#f5f3ff;color:#7c3aed;border-color:#ddd6fe}
+.skill-tag.green{background:#ecfdf5;color:#059669;border-color:#a7f3d0}
+.skill-tag.orange{background:#fff7ed;color:#ea580c;border-color:#fed7aa}
+.skill-tag.red{background:#fef2f2;color:#dc2626;border-color:#fecaca}
+.skill-tag.teal{background:#f0fdfa;color:#0d9488;border-color:#99f6e4}
+.pipeline-track{display:flex;align-items:stretch;gap:0;overflow-x:auto;padding:20px 0}
+.pipeline-stage{flex:1;min-width:140px;position:relative;text-align:center}
+.pipeline-stage .stage-box{background:var(--card-bg);border:2px solid var(--border);border-radius:12px;padding:16px 12px;position:relative;z-index:2;transition:all .3s;cursor:pointer}
+.pipeline-stage .stage-box:hover{border-color:var(--accent);box-shadow:0 4px 16px rgba(59,130,246,.15);transform:translateY(-2px)}
+.pipeline-stage .stage-num{display:inline-block;width:28px;height:28px;line-height:28px;border-radius:50%;background:var(--accent);color:#fff;font-size:13px;font-weight:700;margin-bottom:8px}
+.pipeline-stage .stage-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px}
+.pipeline-stage .stage-skills{font-size:11px;color:var(--text-light)}
+.pipeline-stage:not(:last-child)::after{content:"";position:absolute;top:50%;right:-12px;width:24px;height:2px;background:var(--accent);z-index:1}
+.pipeline-stage:not(:last-child)::before{content:"";position:absolute;top:50%;right:-16px;border:6px solid transparent;border-left-color:var(--accent);z-index:1;transform:translateX(4px)}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+th{background:#f1f5f9;padding:10px 14px;text-align:left;font-weight:600;border:1px solid var(--border);white-space:nowrap}
+td{padding:10px 14px;border:1px solid var(--border);vertical-align:top}
+tr:hover td{background:#f8fafc}
+pre{background:#1e293b;color:#e2e8f0;padding:18px;border-radius:8px;overflow-x:auto;margin:12px 0;font-size:13px;line-height:1.6}
+code{background:#e8ecf1;color:#1e293b;padding:2px 7px;border-radius:4px;font-size:13px;font-family:"Cascadia Code","Fira Code",Consolas,monospace;border:1px solid #d1d5db}
+pre code{background:transparent;color:inherit;padding:0;border:none;border-radius:0;font-size:inherit}
+.hamburger{display:none;position:fixed;top:16px;left:16px;z-index:150;width:40px;height:40px;border-radius:8px;background:var(--sidebar-bg);border:none;cursor:pointer;flex-direction:column;align-items:center;justify-content:center;gap:5px}
+.hamburger span{display:block;width:20px;height:2px;background:#fff;border-radius:1px}
+@media(max-width:900px){
+.sidebar{transform:translateX(-100%)}
+.sidebar.open{transform:translateX(0)}
+.main{margin-left:0}
+.content{padding:24px 20px}
+.hamburger{display:flex}
+.pipeline-track{flex-wrap:wrap}
+.pipeline-stage{min-width:45%}
+.pipeline-stage:not(:last-child)::after,.pipeline-stage:not(:last-child)::before{display:none}
+}
+.highlight-box{background:linear-gradient(135deg,#eff6ff,#f5f3ff);border:1px solid #c7d2fe;border-radius:10px;padding:20px;margin:20px 0}
+.phase-header{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.phase-header .phase-num{width:40px;height:40px;border-radius:10px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;flex-shrink:0}
+.phase-header h2{margin:0;padding:0;border:none}
+.github-banner{text-align:center;padding:40px 0;background:linear-gradient(135deg,#1a1d23,#2a2d35);border-radius:16px;margin:40px 0}
+.github-banner h3{color:#fff;font-size:22px;margin-bottom:12px}
+.github-banner p{color:rgba(255,255,255,.7);margin-bottom:24px}
+.github-btn{display:inline-flex;align-items:center;gap:10px;padding:12px 28px;background:#fff;color:#1a1d23;border-radius:10px;text-decoration:none;font-weight:600;font-size:15px;transition:all .2s;border:none}
+.github-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.github-btn svg{width:22px;height:22px;fill:currentColor}
+.skill-detail{background:var(--card-bg);border-radius:12px;padding:24px;margin-bottom:16px;border:1px solid var(--border);transition:all .2s}
+.skill-detail:hover{box-shadow:0 4px 12px rgba(0,0,0,.08)}
+.skill-detail h4{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.skill-detail .desc{color:var(--text-light);font-size:13px;line-height:1.6}
+.skill-detail .meta{display:flex;gap:12px;margin-top:10px;font-size:12px;color:var(--text-light)}
+.flow-arrow{text-align:center;color:var(--accent);font-size:24px;margin:8px 0}
+</style>
+</head>
+<body>
+
+<button class="hamburger" onclick="document.querySelector('.sidebar').classList.toggle('open')">
+<span></span><span></span><span></span>
+</button>
+
+<aside class="sidebar" id="sidebar">
+<div class="sidebar-header">
+<h2>AI Coding Skills</h2>
+<p>端到端 AI 辅助编码技能体系</p>
+</div>
+<a class="github-link" href="https://github.com/pengguogo/ai-coding-skills" target="_blank">
+<svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+GitHub 仓库
+</a>
+<nav>
+<div class="nav-group">总览</div>
+<a href="#cover">封面与概述</a>
+<a href="#pipeline">全局流程图</a>
+<div class="nav-group">流水线阶段</div>
+<a href="#phase0">阶段 0：技能分发与同步</a>
+<a href="#phase1">阶段 1：环境初始化</a>
+<a href="#phase2">阶段 2：知识还原</a>
+<a href="#phase3">阶段 3：需求分析</a>
+<a href="#phase4">阶段 4：技术方案设计</a>
+<a href="#phase5">阶段 5：任务拆分</a>
+<a href="#phase6">阶段 6：代码实现</a>
+<a href="#phase7">阶段 7：项目归档</a>
+<div class="nav-group">参考</div>
+<a href="#skills-detail">Skills 详情</a>
+<a href="#quality">质量保障技能</a>
+<a href="#dir-structure">目录结构</a>
+<a href="#github">GitHub</a>
+</nav>
+</aside>
+
+<div class="main">
+<div class="content">
+
+<!-- ==================== 封面 ==================== -->
+<section id="cover">
+<div class="cover">
+<h1>AI Coding Skills</h1>
+<p class="subtitle">端到端 AI 辅助编码 · Skills 体系架构 · 规范化 · 可追溯 · 质量内建</p>
+<div class="stats">
+<div class="stat"><div class="num">12</div><div class="label">Skills 技能</div></div>
+<div class="stat"><div class="num">8</div><div class="label">流水线阶段</div></div>
+<div class="stat"><div class="num">6</div><div class="label">质量保障技能</div></div>
+<div class="stat"><div class="num">100%</div><div class="label">全流程覆盖</div></div>
+</div>
+</div>
+
+<div class="card">
+<h3>核心理念</h3>
+<div class="card-grid" style="margin-top:16px">
+<div class="card" style="border-left:4px solid var(--accent)">
+<h4>🔧 规范化</h4>
+<p>每个阶段严格遵循标准化流程与规范引用，确保产出物结构一致、可审计。所有 Skill 遵循「文档职责边界 → 角色定位 → 执行流程 → 输出与交付物 → 执行红线」的统一母版结构。</p>
+</div>
+<div class="card" style="border-left:4px solid var(--accent2)">
+<h4>🔗 可追溯</h4>
+<p>从需求到代码的全链路可追溯：REQ 编号 → 设计文档 → 任务拆分 → 代码实现 → 归档。每个产物都明确标注上游输入与下游消费者，形成完整的知识链。</p>
+</div>
+<div class="card" style="border-left:4px solid var(--success)">
+<h4>✅ 质量内建</h4>
+<p>质量不是事后检查，而是内建于每个阶段：TDD 驱动开发、系统化调试、完成前验证、代码审查请求与接收，贯穿全流程的质量保障 Skills 确保每一步都达到交付标准。</p>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ==================== 全局流程图 ==================== -->
+<section id="pipeline">
+<h2>全局流程图 — 8 阶段流水线全景</h2>
+<p>以下展示了 E2E AI Coding 全流程的 8 个核心阶段，每个阶段对应一个或多个 Skill。点击阶段卡片可查看详情。</p>
+
+<div class="pipeline-track">
+<div class="pipeline-stage">
+<div class="stage-box" onclick="location.href='#phase0'">
+<div class="stage-num">0</div>
+<div class="stage-title">技能分发与同步</div>
+<div class="stage-skills">spec-skills-refresh</div>
+</div>
+</div>
+<div class="pipeline-stage">
+<div class="stage-box" onclick="location.href='#phase1'">
+<div class="stage-num">1</div>
+<div class="stage-title">环境初始化</div>
+<div class="stage-skills">workspace-init</div>
+</div>
+</div>
+<div class="pipeline-stage">
+<div class="stage-box" onclick="location.href='#phase2'">
+<div class="stage-num">2</div>
+<div class="stage-title">知识还原</div>
+<div class="stage-skills">code → application → business</div>
+</div>
+</div>
+<div class="pipeline-stage">
+<div class="stage-box" onclick="location.href='#phase3'">
+<div class="stage-num">3</div>
+<div class="stage-title">需求分析</div>
+<div class="stage-skills">prototype-derivation<br>requirement-analysis</div>
+</div>
+</div>
+<div class="pipeline-stage">
+<div class="stage-box" onclick="location.href='#phase4'">
+<div class="stage-num">4</div>
+<div class="stage-title">技术方案设计</div>
+<div class="stage-skills">fullstack-design</div>
+</div>
+</div>
+<div class="pipeline-stage">
+<div class="stage-box" onclick="location.href='#phase5'">
+<div class="stage-num">5</div>
+<div class="stage-title">任务拆分</div>
+<div class="stage-skills">task-split</div>
+</div>
+</div>
+<div class="pipeline-stage">
+<div class="stage-box" onclick="location.href='#phase6'">
+<div class="stage-num">6</div>
+<div class="stage-title">代码实现</div>
+<div class="stage-skills">fullstack-code-implementation</div>
+</div>
+</div>
+<div class="pipeline-stage">
+<div class="stage-box" onclick="location.href='#phase7'">
+<div class="stage-num">7</div>
+<div class="stage-title">项目归档</div>
+<div class="stage-skills">fullstack-code-review<br>project-archive</div>
+</div>
+</div>
+</div>
+
+<div class="highlight-box">
+<h4>🔄 贯穿全流程的质量保障</h4>
+<p>以下 Skills 在任何阶段均可激活，提供横切质量保障能力：</p>
+<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px">
+<span class="skill-tag teal">test-driven-development</span>
+<span class="skill-tag teal">systematic-debugging</span>
+<span class="skill-tag teal">verification-before-completion</span>
+<span class="skill-tag teal">requesting-code-review</span>
+<span class="skill-tag teal">receiving-code-review</span>
+<span class="skill-tag teal">dispatching-parallel-agents</span>
+</div>
+</div>
+</section>
+
+<!-- ==================== 阶段 0 ==================== -->
+<section id="phase0">
+<div class="phase-header">
+<div class="phase-num">0</div>
+<h2>阶段 0：技能分发与同步</h2>
+</div>
+<div class="card">
+<h3>概述</h3>
+<p>技能分发与同步是整个 E2E 流水线的起点，确保所有 AI 编码工具（Cursor / Kiro / Trae / Claude Code / OpenCode）使用统一版本的技能包。通过从 GitHub 中央仓库拉取最新技能包，并分发到各工具的配置目录，实现技能版本的统一管理。</p>
+<h4>核心 Skill</h4>
+<div style="margin:12px 0">
+<span class="skill-tag blue" style="font-size:14px;padding:6px 14px">📦 spec-skills-refresh</span>
+</div>
+<h4>工作流程</h4>
+<table>
+<tr><th>步骤</th><th>动作</th><th>检查点</th></tr>
+<tr><td>1. 确认配置</td><td>确认 git 仓库地址、目标工具（Cursor/Kiro/Claude Code/OpenCode/Trae）、更新范围（全局/项目）</td><td>仓库 URL、分支策略、工具与范围明确</td></tr>
+<tr><td>2. 执行更新脚本</td><td>从 GitHub 拉取 <code>main</code> 分支，同步到所选路径</td><td>脚本以 0 退出，日志中出现「技能更新完成」</td></tr>
+<tr><td>3. 同步结果说明</td><td>汇总已同步的源目录、各工具 skills 路径、备份快照路径</td><td>路径与范围一致</td></tr>
+</table>
+<h4>快速开始</h4>
+<pre><code># 交互式执行
+bash skills/spec-skills-refresh/script/spec-skills-refresh.sh
+
+# 或在 AI 工具中输入
+/spec-skills-refresh</code></pre>
+</div>
+</section>
+
+<!-- ==================== 阶段 1 ==================== -->
+<section id="phase1">
+<div class="phase-header">
+<div class="phase-num">1</div>
+<h2>阶段 1：环境初始化</h2>
+</div>
+<div class="card">
+<h3>概述</h3>
+<p>环境初始化阶段负责将开发所需的代码仓库批量克隆到本地工作区，并切换到指定分支。支持幂等操作——已存在的仓库会自动更新而非重复克隆。</p>
+<h4>核心 Skill</h4>
+<div style="margin:12px 0">
+<span class="skill-tag green" style="font-size:14px;padding:6px 14px">🏗️ workspace-init</span>
+</div>
+<h4>工作流程</h4>
+<table>
+<tr><th>步骤</th><th>动作</th><th>说明</th></tr>
+<tr><td>1. 解析 repos.txt</td><td>读取工作区根目录的 repos.txt（TSV 格式：name/type/url/branch）</td><td>跳过空行与 # 注释行</td></tr>
+<tr><td>2. 批量 clone/更新</td><td>对每行执行 git clone 或 fetch + checkout + pull --ff-only</td><td>幂等操作，目录存在则更新</td></tr>
+<tr><td>3. 结果校验</td><td>逐条校验目录存在、git 仓库、远程 URL、当前分支、同步状态</td><td>异常时尝试安全修复</td></tr>
+<tr><td>4. 手动清单</td><td>无法自动修复的条目输出可执行的手动处理清单</td><td>包含可复制的 git 命令</td></tr>
+</table>
+<h4>清单文件格式（repos.txt）</h4>
+<pre><code># name    type    url                                    branch
+my-api    app     https://github.com/org/my-api.git      main
+my-web    app     https://github.com/org/my-web.git      develop</code></pre>
+</div>
+</section>
+
+<!-- ==================== 阶段 2 ==================== -->
+<section id="phase2">
+<div class="phase-header">
+<div class="phase-num">2</div>
+<h2>阶段 2：知识还原</h2>
+</div>
+<div class="card">
+<h3>概述</h3>
+<p>知识还原是三层知识流水线：<strong>代码 → 应用 → 业务</strong>。从源代码出发，逐层抽象出应用架构知识和业务领域知识，为后续的需求分析和设计提供事实基础。</p>
+<h4>三层知识流水线</h4>
+<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:20px 0">
+<div style="flex:1;min-width:200px;background:#f5f3ff;border:2px solid #ddd6fe;border-radius:12px;padding:20px;text-align:center">
+<div style="font-size:24px;margin-bottom:8px">📝</div>
+<h4 style="margin:0">code-knowledge-init</h4>
+<p style="font-size:12px;color:var(--text-light);margin:8px 0 0">代码知识还原</p>
+<p style="font-size:11px;color:var(--text-light)">产出：frontend-project.md<br>backend-project.md 等</p>
+</div>
+<div style="font-size:24px;color:var(--accent)">→</div>
+<div style="flex:1;min-width:200px;background:#eff6ff;border:2px solid #bfdbfe;border-radius:12px;padding:20px;text-align:center">
+<div style="font-size:24px;margin-bottom:8px">🏛️</div>
+<h4 style="margin:0">application-knowledge-init</h4>
+<p style="font-size:12px;color:var(--text-light);margin:8px 0 0">应用架构知识</p>
+<p style="font-size:11px;color:var(--text-light)">产出：系统架构、应用主数据<br>应用组件册</p>
+</div>
+<div style="font-size:24px;color:var(--accent)">→</div>
+<div style="flex:1;min-width:200px;background:#ecfdf5;border:2px solid #a7f3d0;border-radius:12px;padding:20px;text-align:center">
+<div style="font-size:24px;margin-bottom:8px">💼</div>
+<h4 style="margin:0">business-knowledge-init</h4>
+<p style="font-size:12px;color:var(--text-light);margin:8px 0 0">业务架构知识</p>
+<p style="font-size:11px;color:var(--text-light)">产出：业务全景、流程与用例<br>领域建模与能力附录</p>
+</div>
+</div>
+<h4>执行方式</h4>
+<pre><code>/code-knowledge-init
+/application-knowledge-init
+/business-knowledge-init</code></pre>
+</div>
+</section>
+
+<!-- ==================== 阶段 3 ==================== -->
+<section id="phase3">
+<div class="phase-header">
+<div class="phase-num">3</div>
+<h2>阶段 3：需求分析</h2>
+</div>
+<div class="card">
+<h3>概述</h3>
+<p>需求分析阶段从设计原型出发，经过推导和结构化分析，产出可评审、可追溯的需求文档。分为两步：原型推导（从 Axure/Figma 原型提取规则）和需求结构化（5W1H 穿透分析）。</p>
+<h4>两步流程</h4>
+<div style="display:flex;align-items:stretch;gap:16px;flex-wrap:wrap;margin:16px 0">
+<div style="flex:1;min-width:280px;border:1px solid var(--border);border-radius:10px;padding:20px">
+<h4 style="color:var(--accent)">Step 1: 原型推导</h4>
+<p><span class="skill-tag orange">prototype-derivation</span></p>
+<ul style="font-size:13px;margin-top:8px">
+<li>盘点原型来源（站点图、HTML 页面）</li>
+<li>映射模块（对齐产品主题）</li>
+<li>摘录规则（推导明细）</li>
+<li>处理冲突（冲突/决策日志）</li>
+<li>交接给正式规格</li>
+</ul>
+<p style="font-size:12px;color:var(--text-light)">产出：推导索引表、推导明细、冲突日志</p>
+</div>
+<div style="display:flex;align-items:center;font-size:24px;color:var(--accent)">→</div>
+<div style="flex:1;min-width:280px;border:1px solid var(--border);border-radius:10px;padding:20px">
+<h4 style="color:var(--accent)">Step 2: 需求结构化</h4>
+<p><span class="skill-tag orange">requirement-analysis</span></p>
+<ul style="font-size:13px;margin-top:8px">
+<li>接受材料与范围确认</li>
+<li>5W1H 穿透分析</li>
+<li>需求项拆解与总体概述</li>
+<li>逐需求项业务流程建模</li>
+<li>隐藏场景与一致性加固</li>
+<li>评审准备与自检</li>
+</ul>
+<p style="font-size:12px;color:var(--text-light)">产出：requirement/requirement.md</p>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ==================== 阶段 4 ==================== -->
+<section id="phase4">
+<div class="phase-header">
+<div class="phase-num">4</div>
+<h2>阶段 4：技术方案设计</h2>
+</div>
+<div class="card">
+<h3>概述</h3>
+<p>技术方案设计阶段在同一执行会话内按顺序完成后端设计与前端设计。后端设计先行，前端设计基于后端设计的接口定义进行字段级对齐，确保前后端契约一致。</p>
+<h4>核心 Skill</h4>
+<div style="margin:12px 0">
+<span class="skill-tag blue" style="font-size:14px;padding:6px 14px">🎯 fullstack-design</span>
+</div>
+<h4>强制顺序</h4>
+<div style="display:flex;align-items:stretch;gap:16px;flex-wrap:wrap;margin:16px 0">
+<div style="flex:1;min-width:280px;background:#eff6ff;border-radius:10px;padding:20px">
+<h4>阶段 A：后端设计</h4>
+<p style="font-size:13px">产出 <code>design/backend-design.md</code></p>
+<ul style="font-size:13px">
+<li>§1 背景与目标</li>
+<li>§2 技术方案（架构/选型/模块）</li>
+<li>§3.1 模型设计（领域/数据/状态机）</li>
+<li>§3.2 功能设计（时序图/接口/幂等/异常）</li>
+<li>§4 稳定性与安全评估</li>
+<li>§5 风险 & §6 开放问题</li>
+</ul>
+</div>
+<div style="display:flex;align-items:center;font-size:24px;color:var(--accent)">→</div>
+<div style="flex:1;min-width:280px;background:#f5f3ff;border-radius:10px;padding:20px">
+<h4>阶段 B：前端设计</h4>
+<p style="font-size:13px">产出 <code>design/frontend-design.md</code></p>
+<ul style="font-size:13px">
+<li>需求与上下文分析</li>
+<li>后端设计对齐（字段级对齐表）</li>
+<li>架构设计（模块/组件/状态）</li>
+<li>UI 组件选型与参照</li>
+<li>接口契约复核</li>
+<li>接口对齐自检清单（8 项强制检查）</li>
+</ul>
+</div>
+</div>
+<div class="highlight-box">
+<strong>⚠️ 关键约束：</strong>禁止在缺少已落盘的 <code>backend-design.md</code> 时开始或定稿 <code>frontend-design.md</code>。前端凡涉及后端 HTTP/API 的契约须以 <code>backend-design.md</code> 为准。
+</div>
+</div>
+</section>
+
+<!-- ==================== 阶段 5 ==================== -->
+<section id="phase5">
+<div class="phase-header">
+<div class="phase-num">5</div>
+<h2>阶段 5：任务拆分</h2>
+</div>
+<div class="card">
+<h3>概述</h3>
+<p>基于已产出的后端和前端设计文档，将本次需求拆分为可落地的开发任务清单（先后端、后前端），输出任务依赖关系与时序建议，供后续代码实现阶段使用。</p>
+<h4>核心 Skill</h4>
+<div style="margin:12px 0">
+<span class="skill-tag teal" style="font-size:14px;padding:6px 14px">📋 task-split</span>
+</div>
+<h4>工作流程</h4>
+<table>
+<tr><th>步骤</th><th>动作</th><th>说明</th></tr>
+<tr><td>1</td><td>读取设计文档并提炼任务来源</td><td>通读 backend-design.md 和 frontend-design.md，提取可拆分的工作包</td></tr>
+<tr><td>2</td><td>确定颗粒度与边界</td><td>任务小到可在一次迭代内完成，明确交付物与验证方式</td></tr>
+<tr><td>3</td><td>生成后端任务清单</td><td>数据库、模块、集成、测试、文档等编号任务</td></tr>
+<tr><td>4</td><td>生成前端任务清单</td><td>路由、组件、状态、联调等编号任务</td></tr>
+<tr><td>5</td><td>任务依赖与执行顺序</td><td>前后端任务的前置依赖、可并行项、联调窗口</td></tr>
+<tr><td>6</td><td>开放问题与风险</td><td>设计中未闭合项、需确认的问题</td></tr>
+<tr><td>7</td><td>落盘与自检</td><td>写入 task/task-split.md</td></tr>
+</table>
+<p style="margin-top:16px"><strong>产出路径：</strong><code>ocspec-&lt;xxx&gt;/requirements/&lt;需求英文名&gt;_&lt;yyyymmdd&gt;/task/task-split.md</code></p>
+</div>
+</section>
+
+<!-- ==================== 阶段 6 ==================== -->
+<section id="phase6">
+<div class="phase-header">
+<div class="phase-num">6</div>
+<h2>阶段 6：代码实现</h2>
+</div>
+<div class="card">
+<h3>概述</h3>
+<p>代码实现阶段基于任务拆分进行前后端编码。按依赖顺序先执行后端任务，后端完成后执行前端任务，最终通过编译门槛验证。</p>
+<h4>核心 Skill</h4>
+<div style="margin:12px 0">
+<span class="skill-tag red" style="font-size:14px;padding:6px 14px">⚡ fullstack-code-implementation</span>
+</div>
+<h4>后端编码流程</h4>
+<table>
+<tr><th>步骤</th><th>动作</th></tr>
+<tr><td>1. 读取设计输入与任务拆分</td><td>基于后端设计文档自动拆分任务清单，按依赖顺序串行推进</td></tr>
+<tr><td>2. 实现前准备</td><td>定位同类现有实现作为参照，路径与包名遵循规范</td></tr>
+<tr><td>3. 按任务类型执行</td><td>数据库变更 → Entity → Mapper → Domain Service → Service → Controller → RPC/Consumer → 单元测试</td></tr>
+<tr><td>4. 记录执行日志</td><td>状态、起止时间、涉及文件、备注</td></tr>
+<tr><td>5. 自检与交付</td><td>对照代码审查检查清单自检，执行编译与单元测试</td></tr>
+</table>
+<h4>前端编码流程</h4>
+<table>
+<tr><th>步骤</th><th>动作</th></tr>
+<tr><td>0. 现有项目分析</td><td>优先基于 frontend-project.md 获取项目约束</td></tr>
+<tr><td>1-2. 项目初始化 + 基础组件</td><td>创建项目结构、配置开发环境、开发通用/业务组件</td></tr>
+<tr><td>3-4. 布局 + 页面组件</td><td>开发布局组件、按优先级开发页面（P0→P1→P2）</td></tr>
+<tr><td>5-7. API + 状态 + 路由</td><td>API 集成、状态管理、路由配置</td></tr>
+<tr><td>8-10. 权限 + 样式 + 交互</td><td>权限控制、样式实现、交互状态</td></tr>
+<tr><td>11-14. 错误 + 性能 + 测试 + CR</td><td>错误处理、性能优化、测试、代码审查准备</td></tr>
+</table>
+<h4>编译门槛（编码完成后）</h4>
+<div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:8px">
+<div style="flex:1;min-width:200px;padding:16px;background:#fef2f2;border:1px solid #fecaca;border-radius:8px">
+<h4 style="color:var(--danger);margin:0">后端编译门槛</h4>
+<p style="font-size:12px;margin:8px 0 0">执行编译/打包/构建脚本，确认关键编译产物生成</p>
+</div>
+<div style="flex:1;min-width:200px;padding:16px;background:#fff7ed;border:1px solid #fed7aa;border-radius:8px">
+<h4 style="color:var(--warning);margin:0">前端构建门槛</h4>
+<p style="font-size:12px;margin:8px 0 0">执行 lint / typecheck / build，确认构建产物非空</p>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ==================== 阶段 7 ==================== -->
+<section id="phase7">
+<div class="phase-header">
+<div class="phase-num">7</div>
+<h2>阶段 7：项目归档</h2>
+</div>
+<div class="card">
+<h3>概述</h3>
+<p>项目归档是 E2E 流程的收尾阶段。在一次执行中完成业务层、应用层、代码/接口层的统一归档，并将增量知识回写到知识库，确保知识库持续更新。</p>
+<h4>核心 Skills</h4>
+<div style="margin:12px 0;display:flex;gap:8px;flex-wrap:wrap">
+<span class="skill-tag orange" style="font-size:14px;padding:6px 14px">🔎 fullstack-code-review</span>
+<span class="skill-tag green" style="font-size:14px;padding:6px 14px">📁 project-archive</span>
+</div>
+<h4>代码审查 — fullstack-code-review</h4>
+<p>设计驱动的全栈实现质量审查。对照设计文档、任务拆分与编码规范，对代码进行结构化审查，输出分级审查报告。覆盖四大维度：</p>
+<table>
+<tr><th>维度</th><th>编号</th><th>说明</th></tr>
+<tr><td>编码规范合规</td><td>BE-* / FE-* / CC-*</td><td>后端/前端/通用编码规范检查</td></tr>
+<tr><td>后端业务实现质量</td><td>BQ-*</td><td>幂等/事务/一致性/并发/重试/状态机/异常处理</td></tr>
+<tr><td>前端业务实现质量</td><td>FQ-*</td><td>状态一致性/竞态/接口健壮性/操作防护/权限</td></tr>
+<tr><td>改动影响分析</td><td>IA-*</td><td>影响范围、兼容性、回滚方案</td></tr>
+</table>
+<h4>项目归档 — project-archive</h4>
+<table>
+<tr><th>产出文件</th><th>视角</th><th>内容</th></tr>
+<tr><td><code>code-archive.md</code></td><td>代码/接口层</td><td>接口契约表、数据模型变更、前后端实现路径、目录/路由/组件变更</td></tr>
+<tr><td><code>application-archive.md</code></td><td>应用层</td><td>前端页面→后端接口→数据/外部依赖的调用链</td></tr>
+<tr><td><code>business-archive.md</code></td><td>业务层</td><td>目标、范围、角色、业务流程、规则、需求对照表</td></tr>
+</table>
+<h4>知识库同步（强制）</h4>
+<p>归档正文落盘后，必须按 5 步流程（读取→分析→定位→融合→校验）更新知识库：</p>
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+<div style="padding:8px 12px;background:#ecfdf5;border-radius:6px;font-size:12px">knowledge/application/</div>
+<div style="padding:8px 12px;background:#ecfdf5;border-radius:6px;font-size:12px">knowledge/business/</div>
+<div style="padding:8px 12px;background:#ecfdf5;border-radius:6px;font-size:12px">knowledge/code/.../frontend-project.md</div>
+<div style="padding:8px 12px;background:#ecfdf5;border-radius:6px;font-size:12px">knowledge/code/.../backend-project.md</div>
+</div>
+</div>
+</section>
+
+<!-- ==================== Skills 详情 ==================== -->
+<section id="skills-detail">
+<h2>Skills 详情</h2>
+<p>本仓库包含 12 个 Skills，每个 Skill 都有独立的 SKILL.md 定义文件和参考文档。</p>
+
+<div class="skill-detail">
+<h4><span class="skill-tag blue">spec-skills-refresh</span> 规范技能刷新</h4>
+<p class="desc">从 GitHub 拉取 ai-coding-skills 技能包（默认 main 分支），并按所选工具与范围同步到全局或项目内的 AI 技能目录。支持 Cursor / Kiro / Trae / Claude Code / OpenCode。</p>
+<div class="meta"><span>📁 3 个文件</span><span>📍 阶段 0</span></div>
+</div>
+
+<div class="skill-detail">
+<h4><span class="skill-tag green">workspace-init</span> 工作空间初始化</h4>
+<p class="desc">读取工作区根目录 repos.txt（TSV：name/type/url/branch），在根目录按 name 自动 clone/更新并切换分支；初始化结束后必须校验各仓库是否就绪，异常时尝试安全修复，无法修复则输出可执行的手动清单。</p>
+<div class="meta"><span>📁 3 个文件</span><span>📍 阶段 1</span></div>
+</div>
+
+<div class="skill-detail">
+<h4><span class="skill-tag purple">code-knowledge-init</span> 代码知识还原</h4>
+<p class="desc">统一执行代码知识还原与初始化：识别目标代码库的前端/后端/一体化属性，并生成对应的 knowledge/code 文档产出。适用于初始化代码知识、还原项目知识、生成项目文档、分析代码库等场景。</p>
+<div class="meta"><span>📁 12 个文件</span><span>📍 阶段 2</span></div>
+</div>
+
+<div class="skill-detail">
+<h4><span class="skill-tag purple">application-knowledge-init</span> 应用架构知识生成</h4>
+<p class="desc">当用户要求生成、梳理或更新"应用架构设计"、"系统架构图"、"应用组件全景"等相关文档时使用。基于前后端代码扫描基线及可验证源码/配置，归纳生成应用架构知识。支持分批次、分层级聚合生成。</p>
+<div class="meta"><span>📁 6 个文件</span><span>📍 阶段 2</span></div>
+</div>
+
+<div class="skill-detail">
+<h4><span class="skill-tag purple">business-knowledge-init</span> 业务架构知识生成</h4>
+<p class="desc">当用户要求生成、梳理或更新"业务架构"、"业务领域知识"、"业务流程"、"用例图"、"领域对象(DO)与领域事件(DE)"等相关文档时使用。基于源码与基线，归纳生成标准化的业务领域知识文档。</p>
+<div class="meta"><span>📁 7 个文件</span><span>📍 阶段 2</span></div>
+</div>
+
+<div class="skill-detail">
+<h4><span class="skill-tag orange">prototype-derivation</span> 原型→需求推导</h4>
+<p class="desc">从设计原型（Axure 导出 HTML、Figma 导出或同类静态包）推导结构化需求追溯物：模块映射、规则摘录、冲突矩阵与交付正式规格前的交接说明。</p>
+<div class="meta"><span>📁 2 个文件</span><span>📍 阶段 3</span></div>
+</div>
+
+<div class="skill-detail">
+<h4><span class="skill-tag orange">requirement-analysis</span> 需求分析</h4>
+<p class="desc">将原始需求整理为符合团队标准的 Markdown 需求文档，并用 5W1H 与评审清单支撑澄清与评审。适用于任意技术栈。</p>
+<div class="meta"><span>📁 4 个文件</span><span>📍 阶段 3</span></div>
+</div>
+
+<div class="skill-detail">
+<h4><span class="skill-tag blue">fullstack-design</span> 前后端技术方案设计</h4>
+<p class="desc">在同一执行会话内按顺序完成后端设计（design/backend-design.md）与前端设计（design/frontend-design.md）。不产出可运行代码。本包内含全部 references。</p>
+<div class="meta"><span>📁 8 个文件</span><span>📍 阶段 4</span></div>
+</div>
+
+<div class="skill-detail">
+<h4><span class="skill-tag teal">task-split</span> 任务拆分</h4>
+<p class="desc">在已通过 fullstack-design 产出两份设计文档之后，基于设计文档将本次需求拆分为可落地的开发任务清单（先后端、后前端），输出任务依赖关系与时序建议。产出 task/task-split.md。</p>
+<div class="meta"><span>📁 3 个文件</span><span>📍 阶段 5</span></div>
+</div>
+
+<div class="skill-detail">
+<h4><span class="skill-tag red">fullstack-code-implementation</span> 前后端代码实现</h4>
+<p class="desc">前后端编码合并技能。基于 task/task-split.md 的后端/前端任务拆分，按后端与前端原有编码流程分别实现。凡由 AI 生成的前后端代码均须标注 AI-Generate。</p>
+<div class="meta"><span>📁 9 个文件</span><span>📍 阶段 6</span></div>
+</div>
+
+<div class="skill-detail">
+<h4><span class="skill-tag orange">fullstack-code-review</span> 前后端代码审查</h4>
+<p class="desc">设计驱动的全栈实现质量审查技能。对照设计文档、任务拆分与编码规范，对代码进行结构化审查，输出分级审查报告。审查覆盖四大维度：编码规范合规、后端业务实现质量、前端业务实现质量、改动影响分析。</p>
+<div class="meta"><span>📁 8 个文件</span><span>📍 阶段 7</span></div>
+</div>
+
+<div class="skill-detail">
+<h4><span class="skill-tag green">project-archive</span> 项目统一归档</h4>
+<p class="desc">端到端统一归档（独立技能）：一次性覆盖前端与后端，结合需求、设计、任务拆分与知识库，产出 code-archive.md、application-archive.md、business-archive.md。落盘后须更新知识库并增量更新项目文档。</p>
+<div class="meta"><span>📁 4 个文件</span><span>📍 阶段 7</span></div>
+</div>
+</section>
+
+<!-- ==================== 质量保障 ==================== -->
+<section id="quality">
+<h2>贯穿全流程的质量保障 Skills</h2>
+<p>以下 Skills 不绑定特定阶段，而是在任何阶段均可激活，提供横切质量保障能力。</p>
+<div class="card-grid">
+<div class="card" style="cursor:default;text-align:center">
+<div style="font-size:28px;margin-bottom:8px">🧪</div>
+<h4>test-driven-development</h4>
+<p style="font-size:12px;color:var(--text-light)">在实现任何功能或修复 Bug 前，先编写测试。确保代码质量与需求覆盖。</p>
+</div>
+<div class="card" style="cursor:default;text-align:center">
+<div style="font-size:28px;margin-bottom:8px">🔍</div>
+<h4>systematic-debugging</h4>
+<p style="font-size:12px;color:var(--text-light)">遇到任何 Bug、测试失败或意外行为时，在提出修复方案前进行系统化调试。</p>
+</div>
+<div class="card" style="cursor:default;text-align:center">
+<div style="font-size:28px;margin-bottom:8px">✅</div>
+<h4>verification-before-completion</h4>
+<p style="font-size:12px;color:var(--text-light)">在声称工作完成、修复或通过之前，运行验证命令并确认输出。证据先于断言。</p>
+</div>
+<div class="card" style="cursor:default;text-align:center">
+<div style="font-size:28px;margin-bottom:8px">📤</div>
+<h4>requesting-code-review</h4>
+<p style="font-size:12px;color:var(--text-light)">完成任务、实现重要功能或合并前，请求代码审查以验证工作满足要求。</p>
+</div>
+<div class="card" style="cursor:default;text-align:center">
+<div style="font-size:28px;margin-bottom:8px">📥</div>
+<h4>receiving-code-review</h4>
+<p style="font-size:12px;color:var(--text-light)">收到代码审查反馈后，在实施建议前进行技术严谨性验证，不盲目执行。</p>
+</div>
+<div class="card" style="cursor:default;text-align:center">
+<div style="font-size:28px;margin-bottom:8px">⚡</div>
+<h4>dispatching-parallel-agents</h4>
+<p style="font-size:12px;color:var(--text-light)">面对 2+ 个独立任务时，分派并行代理以提高效率，无共享状态或顺序依赖。</p>
+</div>
+</div>
+</section>
+
+<!-- ==================== 目录结构 ==================== -->
+<section id="dir-structure">
+<h2>目录结构</h2>
+<p>以下是本仓库的完整目录结构：</p>
+<pre><code>ai-coding-skills/
+├── README.md
+└── skills/
+    ├── spec-skills-refresh/          # 阶段0: 规范技能刷新
+    │   ├── SKILL.md
+    │   ├── references/
+    │   └── script/
+    ├── workspace-init/               # 阶段1: 工作空间初始化
+    │   ├── SKILL.md
+    │   └── references/
+    ├── code-knowledge-init/          # 阶段2: 代码知识还原
+    │   ├── SKILL.md
+    │   ├── backend/
+    │   ├── frontend/
+    │   ├── references/
+    │   └── script/
+    ├── application-knowledge-init/   # 阶段2: 应用架构知识
+    │   ├── SKILL.md
+    │   └── references/
+    ├── business-knowledge-init/      # 阶段2: 业务架构知识
+    │   ├── SKILL.md
+    │   └── references/
+    ├── prototype-derivation/         # 阶段3: 原型推导
+    │   ├── SKILL.md
+    │   └── references/
+    ├── requirement-analysis/         # 阶段3: 需求分析
+    │   ├── SKILL.md
+    │   └── references/
+    ├── fullstack-design/             # 阶段4: 技术方案设计
+    │   ├── SKILL.md
+    │   └── references/
+    ├── task-split/                   # 阶段5: 任务拆分
+    │   ├── SKILL.md
+    │   └── references/
+    ├── fullstack-code-implementation/ # 阶段6: 代码实现
+    │   ├── SKILL.md
+    │   ├── backend/
+    │   ├── frontend/
+    │   └── templates/
+    ├── fullstack-code-review/        # 阶段7: 代码审查
+    │   ├── SKILL.md
+    │   ├── backend/
+    │   ├── common/
+    │   └── frontend/
+    └── project-archive/              # 阶段7: 项目归档
+        ├── SKILL.md
+        └── references/</code></pre>
+</section>
+
+<!-- ==================== GitHub ==================== -->
+<section id="github">
+<div class="github-banner">
+<h3>📦 在 GitHub 上查看</h3>
+<p>获取最新代码、提交 Issue 或贡献代码</p>
+<a class="github-btn" href="https://github.com/pengguogo/ai-coding-skills" target="_blank">
+<svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+github.com/pengguogo/ai-coding-skills
+</a>
+</div>
+</section>
+
+</div>
+</div>
+
+<script>
+const navLinks = document.querySelectorAll('.sidebar nav a');
+const sections = document.querySelectorAll('section');
+window.addEventListener('scroll', function() {
+  let current = '';
+  sections.forEach(function(section) {
+    const top = section.offsetTop - 100;
+    if (window.scrollY >= top) current = section.getAttribute('id');
+  });
+  navLinks.forEach(function(link) {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === '#' + current) link.classList.add('active');
+  });
+});
+document.querySelectorAll('.sidebar nav a').forEach(function(link) {
+  link.addEventListener('click', function() {
+    document.querySelector('.sidebar').classList.remove('open');
+  });
+});
+</script>
+</body>
+</html>
