@@ -6,10 +6,10 @@
 # 支持: Cursor / Kiro / Claude Code / OpenCode / Trae
 #
 # 用法（在 ai-coding-skills 仓库根目录执行）:
-#   bash e2e/workspace/spec-skills-refresh/script/spec-skills-refresh.sh
-#   bash e2e/workspace/spec-skills-refresh/script/spec-skills-refresh.sh --tool cursor --scope global --repo <URL> [--branch <分支>]
-#   bash e2e/workspace/spec-skills-refresh/script/spec-skills-refresh.sh --tool "cursor kiro" --scope project
-# 便携副本路径：skill-init/spec-skills-refresh/script/spec-skills-refresh.sh
+#   bash skills/spec-skills-refresh/script/spec-skills-refresh.sh
+#   bash skills/spec-skills-refresh/script/spec-skills-refresh.sh --tool cursor --scope global --repo <URL> [--branch <分支>]
+#   bash skills/spec-skills-refresh/script/spec-skills-refresh.sh --tool "cursor kiro" --scope project
+# 便携副本路径：skills/spec-skills-refresh/script/spec-skills-refresh.sh
 # =============================================================================
 
 set -e
@@ -24,26 +24,23 @@ DEFAULT_BRANCH="main"
 
 # 技能源目录（相对于 git 仓库根目录）
 SKILL_SOURCE_DIRS=(
-  "e2e/knowledge-base"
-  "e2e/requirement-implementation"
-  "e2e/workspace"
-  "tools"
+  "skills"
 )
 
 # 备份目录与保留数量：与 <parent>/skills 同级为 <parent>/backup-skills/；超过 N 个快照则删除最旧的，仅保留最近 N 个
 MAX_SKILL_BACKUPS=3
 
 # ---- 颜色输出 ----------------------------------------------------------------
-GREEN='\\033[0;32m'
-YELLOW='\\033[1;33m'
-RED='\\033[0;31m'
-CYAN='\\033[0;36m'
-NC='\\033[0m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+CYAN='\033[0;36m'
+NC='\033[0m'
 
-info()    { echo -e "\${GREEN}[INFO]\${NC} $1"; }
-warn()    { echo -e "\${YELLOW}[WARN]\${NC} $1"; }
-error()   { echo -e "\${RED}[ERROR]\${NC} $1"; exit 1; }
-section() { echo -e "\${CYAN}$1\${NC}"; }
+info()    { echo -e "${GREEN}[INFO]${NC} $1"; }
+warn()    { echo -e "${YELLOW}[WARN]${NC} $1"; }
+error()   { echo -e "${RED}[ERROR]${NC} $1"; exit 1; }
+section() { echo -e "${CYAN}$1${NC}"; }
 
 # ---- 解析参数 ----------------------------------------------------------------
 SCOPE=""
@@ -66,15 +63,15 @@ load_config() {
   if [[ -f "$CONFIG_FILE" ]]; then
     # shellcheck source=/dev/null
     source "$CONFIG_FILE"
-    REPO_URL="\${REPO_URL:-$SAVED_REPO_URL}"
-    BRANCH="\${BRANCH:-$SAVED_BRANCH}"
+    REPO_URL="${REPO_URL:-$SAVED_REPO_URL}"
+    BRANCH="${BRANCH:-$SAVED_BRANCH}"
   fi
 }
 
 save_config() {
   {
-    echo "SAVED_REPO_URL=\\"$REPO_URL\\""
-    echo "SAVED_BRANCH=\\"$BRANCH\\""
+    echo "SAVED_REPO_URL=\"$REPO_URL\""
+    echo "SAVED_BRANCH=\"$BRANCH\""
   } > "$CONFIG_FILE"
   info "git 仓库与分支已保存到 $CONFIG_FILE"
 }
@@ -86,7 +83,7 @@ ask_repo_url() {
     echo "请输入技能仓库的 git 地址（直接回车使用默认）："
     echo "  默认: $DEFAULT_REPO_URL"
     read -r -p "> " input
-    REPO_URL="\${input:-$DEFAULT_REPO_URL}"
+    REPO_URL="${input:-$DEFAULT_REPO_URL}"
     [[ -z "$REPO_URL" ]] && error "git 仓库地址不能为空"
     save_config
   fi
@@ -115,7 +112,7 @@ ask_tool() {
         *) warn "忽略无效选项: $c" ;;
       esac
     done
-    TOOL="\${TOOL# }"  # 去掉开头空格
+    TOOL="${TOOL# }"  # 去掉开头空格
     [[ -z "$TOOL" ]] && error "未选择任何工具"
   fi
 }
@@ -176,16 +173,19 @@ prune_skill_backups() {
   done
   shopt -u nullglob
 
-  local n=\${#items[@]}
+  local n=${#items[@]}
   (( n <= keep )) && return 0
 
   # 按目录名升序 = 时间戳从早到晚，先删列表前若干项即最旧备份
-  mapfile -t sorted < <(printf '%s\\n' "\${items[@]}" | LC_ALL=C sort)
+  sorted=()
+  while IFS= read -r line; do
+    sorted+=("$line")
+  done < <(printf '%s\n' "${items[@]}" | LC_ALL=C sort)
   local remove=$((n - keep))
   local i
   for ((i = 0; i < remove; i++)); do
-    info "  删除最旧备份: \${sorted[$i]}"
-    rm -rf "\${sorted[$i]}"
+    info "  删除最旧备份: ${sorted[$i]}"
+    rm -rf "${sorted[$i]}"
   done
 }
 
@@ -195,8 +195,8 @@ backup_existing() {
 
   local parent backup_root backup_dir
   parent=$(dirname -- "$target")
-  backup_root="\${parent}/backup-skills"
-  backup_dir="\${backup_root}/backup-\${TIMESTAMP}"
+  backup_root="${parent}/backup-skills"
+  backup_dir="${backup_root}/backup-${TIMESTAMP}"
 
   mkdir -p "$backup_dir"
   cp -r "$target"/. "$backup_dir/"
@@ -212,25 +212,25 @@ clone_repo() {
   info "正在从 git 拉取最新技能..."
   info "仓库: $REPO_URL"
   info "分支: $BRANCH"
-  git clone --depth=1 --branch "$BRANCH" "$REPO_URL" "$TEMP_DIR" \\
+  git clone --depth=1 --branch "$BRANCH" "$REPO_URL" "$TEMP_DIR" \
     || error "git clone 失败，请检查仓库地址、分支名和网络连接"
   info "拉取完成"
 }
 
 # ---- 通用：技能平铺（Cursor / Kiro / Trae）-----------------------------------
-# 仅从各 SKILL_SOURCE_DIRS 下的一级子目录同步到 $target/<技能名>/，不保留 e2e/knowledge-base 等父级路径。
+# 仅从各 SKILL_SOURCE_DIRS 下的一级子目录同步到 $target/<技能名>/，不保留源路径中的父级目录。
 # 备份完成后先删除本地需要同步的技能目录，再从远端全量复制，确保本地不残留远端已删除的文件。
 sync_flat() {
   local target="$1"
   local label="$2"
-  declare -A SEEN_SKILL
+  local SEEN_SKILL=""
 
   section "→ 同步到 $label: $target"
   mkdir -p "$target"
   backup_existing "$target"
 
   # ---- 第一遍：收集远端所有技能名，并删除本地同名目录 ----
-  for dir in "\${SKILL_SOURCE_DIRS[@]}"; do
+  for dir in "${SKILL_SOURCE_DIRS[@]}"; do
     local src="$TEMP_DIR/$dir"
     [[ -d "$src" ]] || continue
     for skill_dir in "$src"/*/; do
@@ -245,7 +245,7 @@ sync_flat() {
   done
 
   # ---- 第二遍：从远端复制技能 ----
-  for dir in "\${SKILL_SOURCE_DIRS[@]}"; do
+  for dir in "${SKILL_SOURCE_DIRS[@]}"; do
     local src="$TEMP_DIR/$dir"
     if [[ ! -d "$src" ]]; then
       warn "  源目录不存在，跳过: $dir"
@@ -256,10 +256,10 @@ sync_flat() {
       local skill_name
       skill_name=$(basename "$skill_dir")
       local dest="$target/$skill_name"
-      if [[ -n "\${SEEN_SKILL[$skill_name]+x}" ]]; then
+      if [[ "$SEEN_SKILL" == *"|${skill_name}|"* ]]; then
         warn "  技能名冲突，将合并写入: $skill_name （来源 $dir）"
       fi
-      SEEN_SKILL[$skill_name]=1
+      SEEN_SKILL="${SEEN_SKILL}|${skill_name}|"
       mkdir -p "$dest"
       cp -r "$skill_dir"/. "$dest/"
       info "  ✓ $skill_name ← $dir"
@@ -272,14 +272,14 @@ sync_flat() {
 sync_skill_dirs() {
   local target="$1"
   local label="$2"
-  declare -A SEEN_SKILL
+  local SEEN_SKILL=""
 
   section "→ 同步到 $label: $target"
   mkdir -p "$target"
   backup_existing "$target"
 
   # ---- 第一遍：收集远端所有技能名，并删除本地同名目录 ----
-  for dir in "\${SKILL_SOURCE_DIRS[@]}"; do
+  for dir in "${SKILL_SOURCE_DIRS[@]}"; do
     local src="$TEMP_DIR/$dir"
     [[ -d "$src" ]] || continue
     for skill_dir in "$src"/*/; do
@@ -294,7 +294,7 @@ sync_skill_dirs() {
   done
 
   # ---- 第二遍：从远端复制技能 ----
-  for dir in "\${SKILL_SOURCE_DIRS[@]}"; do
+  for dir in "${SKILL_SOURCE_DIRS[@]}"; do
     local src="$TEMP_DIR/$dir"
     if [[ -d "$src" ]]; then
       for skill_dir in "$src"/*/; do
@@ -302,15 +302,15 @@ sync_skill_dirs() {
         local skill_name
         skill_name=$(basename "$skill_dir")
         local dest="$target/$skill_name"
-        if [[ -n "\${SEEN_SKILL[$skill_name]+x}" ]]; then
+        if [[ "$SEEN_SKILL" == *"|${skill_name}|"* ]]; then
           warn "  技能名冲突，将合并写入: $skill_name （来源 $dir）"
         fi
-        SEEN_SKILL[$skill_name]=1
+        SEEN_SKILL="${SEEN_SKILL}|${skill_name}|"
         mkdir -p "$dest"
         cp -r "$skill_dir"/. "$dest/"
         # 如果子目录内没有 SKILL.md，自动生成一个最小占位
         if [[ ! -f "$dest/SKILL.md" ]]; then
-          printf -- "---\\nname: %s\\ndescription: %s skill from ai-coding-skills\\n---\\n" \\
+          printf -- "---\nname: %s\ndescription: %s skill from ai-coding-skills\n---\n" \
             "$skill_name" "$skill_name" > "$dest/SKILL.md"
         fi
         info "  ✓ $skill_name ← $dir"
@@ -348,7 +348,7 @@ main() {
   echo "============================================"
 
   load_config
-  BRANCH="\${BRANCH:-$DEFAULT_BRANCH}"
+  BRANCH="${BRANCH:-$DEFAULT_BRANCH}"
   ask_repo_url
   ask_tool
   ask_scope

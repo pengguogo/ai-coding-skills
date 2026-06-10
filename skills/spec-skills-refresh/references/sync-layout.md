@@ -5,17 +5,14 @@
 ## 技能来源目录（相对仓库根）
 
 
-| 目录                                | 说明        |
-| --------------------------------- | --------- |
-| \`e2e/knowledge-base/\`             | 知识库相关技能   |
-| \`e2e/requirement-implementation/\` | 需求实现相关技能  |
-| \`e2e/workspace/\`                  | 工作空间初始化技能 |
-| \`tools/\`                          | 工具类技能     |
+| 目录          | 说明     |
+| ----------- | ------ |
+| \`skills/\` | 所有技能目录 |
 
 
 ## 各工具目标路径与同步方式
 
-所有工具均**不保留**源仓库中的父级路径（如 \`e2e/knowledge-base/\`）：只把各源目录下的**一级子目录**当作一个技能，同步到 \`<目标 skills>/<技能名>/\`。备份完成后，先**删除**本地 skills 中与远端同名的技能目录，再从远端全量复制，确保本地不残留远端已删除的文件。
+所有工具均**不保留**源仓库中的父级路径：只把各源目录下的**一级子目录**当作一个技能，同步到 \`<目标 skills>/<技能名>/\`。备份完成后，先**删除**本地 skills 中与远端同名的技能目录，再从远端全量复制，确保本地不残留远端已删除的文件。
 
 | 工具          | 全局路径                                | 项目路径                       | 同步方式 |
 | ----------- | ----------------------------------- | -------------------------- | ---- |
@@ -46,9 +43,9 @@
 - **备份**：见上文「备份目录」；快照目录名 \`backup-YYYYMMDD_HHMMSS\`；超过 \`MAX_SKILL_BACKUPS\`（默认 3）时删除**最旧**快照。
 - **配置持久化**：\`~/.oc-skills-config\` 可保存 \`SAVED_REPO_URL\` 与 \`SAVED_BRANCH\`，后续可免填（仍可用命令行覆盖）。
 - **依赖**：本机需已安装 \`git\`；Bash 环境用于执行 \`script/spec-skills-refresh.sh\`（Git Bash / WSL / macOS / Linux）。
-- **同名技能**：同一轮同步中，若多个源根目录下出现同名一级子目录（如 \`e2e/knowledge-base/foo\` 与 \`tools/foo\`），后处理的源会**合并写入**同一 \`<技能名>/\`，日志中会输出冲突提示。
+- **同名技能**：同一轮同步中，若多个源根目录下出现同名一级子目录，后处理的源会**合并写入**同一 \`<技能名>/\`，日志中会输出冲突提示。
 
 ## 脚本位置（仓库内）
 
-- 相对仓库根：\`e2e/workspace/spec-skills-refresh/script/spec-skills-refresh.sh\`（便携副本：\`skill-init/spec-skills-refresh/script/spec-skills-refresh.sh\`）
-- 在仓库根目录执行：\`bash e2e/workspace/spec-skills-refresh/script/spec-skills-refresh.sh\`
+- 相对仓库根：\`skills/spec-skills-refresh/script/spec-skills-refresh.sh\`
+- 在仓库根目录执行：\`bash skills/spec-skills-refresh/script/spec-skills-refresh.sh\`

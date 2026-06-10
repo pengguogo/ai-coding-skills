@@ -54,14 +54,14 @@ description: 从 git 拉取 ai-coding-skills 技能包（默认 GitHub 仓库、
 - **动作**：在仓库根目录执行：
 
 \`\`\`bash
-# 交互模式（推荐；仓库地址回车即默认 GitLab）
-bash e2e/workspace/spec-skills-refresh/script/spec-skills-refresh.sh
+# 交互模式（推荐；仓库地址回车即默认）
+bash skills/spec-skills-refresh/script/spec-skills-refresh.sh
 
 # 非交互示例
-bash e2e/workspace/spec-skills-refresh/script/spec-skills-refresh.sh \\
-  --tool "cursor kiro claude opencode trae" \\
-  --scope global \\
-  --repo https://github.com/pengguogo/ai-coding-skills.git \\
+bash skills/spec-skills-refresh/script/spec-skills-refresh.sh \
+  --tool "cursor kiro claude opencode trae" \
+  --scope global \
+  --repo https://github.com/pengguogo/ai-coding-skills.git \
   --branch main
 \`\`\`
 
@@ -77,16 +77,16 @@ bash e2e/workspace/spec-skills-refresh/script/spec-skills-refresh.sh \\
 
 - **产出**：各工具技能目录下的更新文件。
 - **备份**：与 \`<parent>/skills\` 同级的 \`<parent>/backup-skills/backup-<时间戳>/\`；每个 \`backup-skills\` 下超过 3 份时**删除最旧的**，只保留最新 3 份（详见 \`references/sync-layout.md\` 与脚本内 \`MAX_SKILL_BACKUPS\`）。
-- **策略**：备份完成后，先删除本地 skills 中与远端同名的技能目录，再从远端全量复制，确保本地不残留远端已删除的文件；各工具均在 \`<skills>/<技能名>/\` 下平铺技能内容，**不保留** \`e2e/knowledge-base\` 等源路径父级；Claude / OpenCode 对缺失的 \`SKILL.md\` 生成占位。
+- **策略**：备份完成后，先删除本地 skills 中与远端同名的技能目录，再从远端全量复制，确保本地不残留远端已删除的文件；各工具均在 \`<skills>/<技能名>/\` 下平铺技能内容，**不保留**源路径中的父级目录；Claude / OpenCode 对缺失的 \`SKILL.md\` 生成占位。
 
 ## 规范引用（单一来源）
 
 - 路径与来源目录：\`references/sync-layout.md\`
-- 技能包母版结构（新建/维护其他 skill 时）：仓库内 \`e2e/skills-template.md\`
+- 技能包母版结构（新建/维护其他 skill 时）：仓库内 \`skills/\` 下各技能的目录结构
 
 ## 执行红线
 
 1. 不在未确认仓库 URL 与范围的情况下执行覆盖式同步。
 2. 不在 \`SKILL.md\` 中重复维护路径大表；变更路径约定时只改 \`references/sync-layout.md\` 与脚本。
-3. 不臆造用户未提供的仓库地址；默认以脚本内 \`DEFAULT_REPO_URL\` / \`DEFAULT_BRANCH\` 与 \`e2e/workspace/spec-skills-refresh/script/spec-skills-refresh.sh\` 行为为准（仓库根目录执行；便携副本见 \`skill-init/spec-skills-refresh/\`）。
+3. 不臆造用户未提供的仓库地址；默认以脚本内 \`DEFAULT_REPO_URL\` / \`DEFAULT_BRANCH\` 与 \`skills/spec-skills-refresh/script/spec-skills-refresh.sh\` 行为为准（仓库根目录执行）。
 4. 对不确定的环境差异须在答复中明确标注，并指向 \`references/sync-layout.md\` 中的说明。
