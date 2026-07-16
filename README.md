@@ -1,320 +1,320 @@
 # AI Coding Skills
 
-端到端 AI 辅助编码技能体系 —— 规范化 · 可追溯 · 质量内建
+> [简体中文](README.zh.md) | **English**
+
+End-to-End AI-Assisted Coding Skill System — Standardized · Traceable · Quality Built-in
 
 ---
 
-## 概述
+## Overview
 
-本仓库包含一套完整的 **E2E AI Coding Skills** 体系，覆盖从技能分发、环境初始化、知识还原、需求分析、技术方案设计、任务拆分、代码实现到项目归档的完整端到端 AI 编码流程。
+This repository contains a complete **E2E AI Coding Skills** system covering the full end-to-end AI coding pipeline: skill distribution, environment initialization, knowledge restoration, requirement analysis, technical design, task splitting, code implementation, and project archiving.
 
-> 本技能体系从 E2E AI Coding 全流程报告提取并还原，保留了原始的目录结构和文件组织方式。
-
----
-
-## 核心理念
-
-| 理念 | 说明 |
-|------|------|
-| **🔧 规范化** | 每个阶段严格遵循标准化流程与规范引用，确保产出物结构一致、可审计 |
-| **🔗 可追溯** | 从需求到代码的全链路可追溯：REQ 编号 → 设计文档 → 任务拆分 → 代码实现 → 归档 |
-| **✅ 质量内建** | 质量不是事后检查，而是内建于每个阶段，贯穿全流程的质量保障 Skills |
+> This skill system is extracted and restored from the E2E AI Coding full-process report, preserving the original directory structure and file organization.
 
 ---
 
-## 技能体系总览
+## Core Principles
 
-本仓库包含 **12 个 Skills**（另有 2 个质量保障技能在 `fullstack-code-review` 中体现），分为 **8 个流水线阶段**：
-
-### 流水线阶段
-
-| 阶段 | 名称 | Skills | 说明 |
-|------|------|--------|------|
-| 0 | 技能分发与同步 | `spec-skills-refresh` | 从 GitHub 拉取最新技能包到各 AI 工具 |
-| 1 | 环境初始化 | `workspace-init` | 批量 clone 仓库、切换分支 |
-| 2 | 知识还原 | `code-knowledge-init`<br>`application-knowledge-init`<br>`business-knowledge-init` | 三层知识流水线：代码 → 应用 → 业务 |
-| 3 | 需求分析 | `prototype-derivation`<br>`requirement-analysis` | 原型推导 → 需求结构化 |
-| 4 | 技术方案设计 | `fullstack-design` | 后端设计 → 前端设计（同一会话内完成） |
-| 5 | 任务拆分 | `task-split` | 拆分前后端任务、依赖关系 |
-| 6 | 代码实现 | `fullstack-code-implementation` | 前后端编码实现 |
-| 7 | 项目归档 | `project-archive`<br>`fullstack-code-review` | 代码审查 → 统一归档 |
+| Principle | Description |
+|------------|-------------|
+| **Standardized** | Each stage strictly follows standardized workflows and specification references, ensuring consistent and auditable deliverables |
+| **Traceable** | Full-chain traceability from requirements to code: REQ ID → Design Document → Task Split → Code Implementation → Archive |
+| **Quality Built-in** | Quality is not an afterthought but built into every stage, with quality assurance skills running throughout the entire pipeline |
 
 ---
 
-## 使用流程
+## Supported AI Tools
 
-### 完整流水线执行顺序
+This skill system supports the following AI coding tools:
+
+- Cursor
+- Kiro
+- Trae
+- Claude Code
+- OpenCode
+
+---
+
+## Pipeline Overview
+
+The system includes **12 Skills** organized into **8 pipeline stages**:
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                              E2E AI Coding 流水线                           │
+│                          E2E AI Coding Pipeline                             │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                                                                             │
-│  阶段0: spec-skills-refresh                                                │
+│  Stage 0: spec-skills-refresh                                              │
 │     ↓                                                                       │
-│  阶段1: workspace-init                                                     │
+│  Stage 1: workspace-init                                                   │
 │     ↓                                                                       │
-│  阶段2: code-knowledge-init → application-knowledge-init                   │
+│  Stage 2: code-knowledge-init → application-knowledge-init                  │
 │                                → business-knowledge-init                    │
 │     ↓                                                                       │
-│  阶段3: prototype-derivation → requirement-analysis                        │
+│  Stage 3: prototype-derivation → requirement-analysis                      │
 │     ↓                                                                       │
-│  阶段4: fullstack-design (后端设计 → 前端设计)                              │
+│  Stage 4: fullstack-design (Backend Design → Frontend Design)              │
 │     ↓                                                                       │
-│  阶段5: task-split                                                         │
+│  Stage 5: task-split                                                       │
 │     ↓                                                                       │
-│  阶段6: fullstack-code-implementation                                      │
+│  Stage 6: fullstack-code-implementation                                    │
 │     ↓                                                                       │
-│  阶段7: fullstack-code-review → project-archive                            │
+│  Stage 7: fullstack-code-review → project-archive                          │
 │                                                                             │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### 详细使用说明
+### Stage Summary
 
-#### 阶段 0：技能分发与同步
+| Stage | Name | Skills | Description |
+|-------|------|--------|-------------|
+| 0 | Skill Distribution & Sync | `spec-skills-refresh` | Pull latest skill packages from GitHub to each AI tool |
+| 1 | Environment Initialization | `workspace-init` | Batch clone repositories and switch branches |
+| 2 | Knowledge Restoration | `code-knowledge-init`<br>`application-knowledge-init`<br>`business-knowledge-init` | Three-layer knowledge pipeline: Code → Application → Business |
+| 3 | Requirement Analysis | `prototype-derivation`<br>`requirement-analysis` | Prototype derivation → Requirement structuring |
+| 4 | Technical Design | `fullstack-design` | Backend design → Frontend design (completed in the same session) |
+| 5 | Task Splitting | `task-split` | Split frontend and backend tasks, dependency analysis |
+| 6 | Code Implementation | `fullstack-code-implementation` | Frontend and backend coding |
+| 7 | Project Archiving | `project-archive`<br>`fullstack-code-review` | Code review → Unified archiving |
 
-**Skill**: `spec-skills-refresh`
+---
 
-将本仓库的技能包同步到各 AI 编码工具的配置目录。
+## Quick Start
+
+### Prerequisites
+
+- Git installed
+- At least one supported AI coding tool installed (Cursor / Kiro / Trae / Claude Code / OpenCode)
+- GitHub account with access permissions
+
+### Step 1: Clone the Repository
 
 ```bash
-# 交互式执行
-bash skills/spec-skills-refresh/script/spec-skills-refresh.sh
+git clone https://github.com/pengguogo/ai-coding-skills.git
+cd ai-coding-skills
+```
 
-# 或直接调用技能（在 AI 工具中输入）
+### Step 2: Sync Skills to Your AI Tool
+
+```bash
+# Interactive execution
+bash skills/spec-skills-refresh/script/spec-skills-refresh.sh
+```
+
+Or invoke directly in your AI tool:
+
+```
 /spec-skills-refresh
 ```
 
-**支持工具**: Cursor / Kiro / Trae / Claude Code / OpenCode
+### Step 3: Initialize Your Workspace
+
+1. Create a `repos.txt` file in your workspace root:
+
+```txt
+# name    type    url                                          branch
+my-api    app     https://github.com/org/my-api.git            main
+my-web    app     https://github.com/org/my-web.git            develop
+```
+
+2. Run the initialization:
+
+```
+/workspace-init
+```
+
+### Step 4: Execute the Pipeline
+
+```
+Stage 0: /spec-skills-refresh        # Skill sync
+Stage 1: /workspace-init             # Environment initialization
+Stage 2: /code-knowledge-init        # Code knowledge restoration
+         /application-knowledge-init # Application architecture knowledge
+         /business-knowledge-init    # Business knowledge
+Stage 3: /prototype-derivation       # Prototype derivation
+         /requirement-analysis       # Requirement analysis
+Stage 4: /fullstack-design           # Technical design
+Stage 5: /task-split                 # Task splitting
+Stage 6: /fullstack-code-implementation  # Code implementation
+Stage 7: /fullstack-code-review      # Code review
+         /project-archive            # Project archiving
+```
+
+> You don't have to run every stage. For example, if you already have requirement documents, you can start directly from Stage 4.
 
 ---
 
-#### 阶段 1：环境初始化
+## Skill Reference
 
-**Skill**: `workspace-init`
-
-批量 clone 仓库并切换到指定分支。
-
-1. 在工作区根目录创建 `repos.txt` 文件，格式如下：
-   ```
-   # name    type    url                                          branch
-   my-api    app     https://github.com/org/my-api.git            main
-   my-web    app     https://github.com/org/my-web.git            develop
-   ```
-
-2. 执行技能：
-   ```
-   /workspace-init
-   ```
-
----
-
-#### 阶段 2：知识还原
-
-**三层知识流水线**：
-
-| 顺序 | Skill | 产出 |
-|------|-------|------|
-| 2.1 | `code-knowledge-init` | `frontend-project.md`, `backend-project.md` 等 |
-| 2.2 | `application-knowledge-init` | `application-system-architecture.md` 等 |
-| 2.3 | `business-knowledge-init` | `business-overview-and-planning.md` 等 |
-
-**执行方式**：
-```
-/code-knowledge-init
-/application-knowledge-init
-/business-knowledge-init
-```
+| Stage | Skill | Description | Command |
+|-------|-------|-------------|---------|
+| 0 | spec-skills-refresh | Skill distribution and sync | `/spec-skills-refresh` |
+| 1 | workspace-init | Environment initialization | `/workspace-init` |
+| 2 | code-knowledge-init | Code knowledge restoration | `/code-knowledge-init` |
+| 2 | application-knowledge-init | Application architecture knowledge | `/application-knowledge-init` |
+| 2 | business-knowledge-init | Business architecture knowledge | `/business-knowledge-init` |
+| 3 | prototype-derivation | Prototype derivation | `/prototype-derivation` |
+| 3 | requirement-analysis | Requirement analysis | `/requirement-analysis` |
+| 4 | fullstack-design | Technical design | `/fullstack-design` |
+| 5 | task-split | Task splitting | `/task-split` |
+| 6 | fullstack-code-implementation | Code implementation | `/fullstack-code-implementation` |
+| 7 | fullstack-code-review | Code review | `/fullstack-code-review` |
+| 7 | project-archive | Project archiving | `/project-archive` |
 
 ---
 
-#### 阶段 3：需求分析
-
-**Skills**: `prototype-derivation` → `requirement-analysis`
-
-1. **原型推导**（如有 Axure/Figma 原型）：
-   ```
-   /prototype-derivation
-   ```
-   产出：推导索引表、推导明细、冲突日志
-
-2. **需求结构化**：
-   ```
-   /requirement-analysis
-   ```
-   产出：`requirement/requirement.md`
-
----
-
-#### 阶段 4：技术方案设计
-
-**Skill**: `fullstack-design`
-
-在同一会话内完成后端设计与前端设计：
+## Directory Structure
 
 ```
-/fullstack-design
+ai-coding-skills/
+├── README.md                           # Project README
+├── wiki/                               # Wiki documentation
+│   ├── Home.md
+│   ├── Quick-Start.md
+│   ├── Pipeline-Overview.md
+│   ├── Skills-Reference.md
+│   ├── Directory-Structure.md
+│   ├── Best-Practices.md
+│   ├── Contributing.md
+│   └── FAQ.md
+└── skills/                             # Skills directory
+    ├── spec-skills-refresh/            # Stage 0: Skill refresh
+    │   ├── SKILL.md
+    │   ├── references/
+    │   └── script/
+    ├── workspace-init/                 # Stage 1: Workspace initialization
+    │   ├── SKILL.md
+    │   └── references/
+    ├── code-knowledge-init/            # Stage 2: Code knowledge restoration
+    │   ├── SKILL.md
+    │   ├── backend/
+    │   ├── frontend/
+    │   ├── references/
+    │   └── script/
+    ├── application-knowledge-init/     # Stage 2: Application architecture
+    │   ├── SKILL.md
+    │   └── references/
+    ├── business-knowledge-init/        # Stage 2: Business architecture
+    │   ├── SKILL.md
+    │   └── references/
+    ├── prototype-derivation/           # Stage 3: Prototype derivation
+    │   ├── SKILL.md
+    │   └── references/
+    ├── requirement-analysis/           # Stage 3: Requirement analysis
+    │   ├── SKILL.md
+    │   └── references/
+    ├── fullstack-design/               # Stage 4: Technical design
+    │   ├── SKILL.md
+    │   └── references/
+    ├── task-split/                     # Stage 5: Task splitting
+    │   ├── SKILL.md
+    │   └── references/
+    ├── fullstack-code-implementation/  # Stage 6: Code implementation
+    │   ├── SKILL.md
+    │   ├── backend/
+    │   ├── frontend/
+    │   └── templates/
+    ├── fullstack-code-review/          # Stage 7: Code review
+    │   ├── SKILL.md
+    │   ├── backend/
+    │   ├── common/
+    │   └── frontend/
+    └── project-archive/                # Stage 7: Project archiving
+        ├── SKILL.md
+        └── references/
 ```
 
-**产出**：
-- `design/backend-design.md` — 后端技术方案
-- `design/frontend-design.md` — 前端技术方案
+### Skill Structure
 
-**关键约束**：前端设计必须基于后端设计的接口定义进行字段级对齐。
-
----
-
-#### 阶段 5：任务拆分
-
-**Skill**: `task-split`
-
-基于设计文档拆分前后端任务：
-
-```
-/task-split
-```
-
-**产出**：`task/task-split.md`
-- 后端任务清单（数据库、模块、集成、测试）
-- 前端任务清单（路由、组件、状态、联调）
-- 任务依赖关系与执行顺序
-
----
-
-#### 阶段 6：代码实现
-
-**Skill**: `fullstack-code-implementation`
-
-基于任务拆分进行前后端编码：
-
-```
-/fullstack-code-implementation
-```
-
-**执行流程**：
-1. 读取 `task/task-split.md`
-2. 按依赖顺序执行后端任务
-3. 后端完成后执行前端任务
-4. 编译门槛验证（后端编译 + 前端构建）
-
----
-
-#### 阶段 7：代码审查与归档
-
-**Skills**: `fullstack-code-review` → `project-archive`
-
-1. **代码审查**：
-   ```
-   /fullstack-code-review
-   ```
-   产出：`review/code-review-report.md`
-
-2. **项目归档**：
-   ```
-   /project-archive
-   ```
-   产出：
-   - `archive/code-archive.md` — 代码归档
-   - `archive/application-archive.md` — 应用层归档
-   - `archive/business-archive.md` — 业务层归档
-
----
-
-
-
-## 目录结构
-
-```
-skills/
-├── spec-skills-refresh/          # 阶段0: 规范技能刷新
-│   ├── SKILL.md
-│   ├── references/
-│   └── script/
-├── workspace-init/               # 阶段1: 工作空间初始化
-│   ├── SKILL.md
-│   └── references/
-├── code-knowledge-init/          # 阶段2: 代码知识还原
-│   ├── SKILL.md
-│   ├── backend/
-│   ├── frontend/
-│   ├── references/
-│   └── script/
-├── application-knowledge-init/   # 阶段2: 应用架构知识
-│   ├── SKILL.md
-│   └── references/
-├── business-knowledge-init/      # 阶段2: 业务架构知识
-│   ├── SKILL.md
-│   └── references/
-├── prototype-derivation/         # 阶段3: 原型推导
-│   ├── SKILL.md
-│   └── references/
-├── requirement-analysis/         # 阶段3: 需求分析
-│   ├── SKILL.md
-│   └── references/
-├── fullstack-design/             # 阶段4: 技术方案设计
-│   ├── SKILL.md
-│   └── references/
-├── task-split/                   # 阶段5: 任务拆分
-│   ├── SKILL.md
-│   └── references/
-├── fullstack-code-implementation/ # 阶段6: 代码实现
-│   ├── SKILL.md
-│   ├── backend/
-│   ├── frontend/
-│   └── templates/
-├── fullstack-code-review/        # 阶段7: 代码审查
-│   ├── SKILL.md
-│   ├── backend/
-│   ├── common/
-│   └── frontend/
-└── project-archive/              # 阶段7: 项目归档
-    ├── SKILL.md
-    └── references/
-```
-
----
-
-## 每个 Skill 的结构
-
-每个 Skill 遵循统一的母版结构：
+Each skill follows a unified template structure:
 
 ```
 skill-name/
-├── SKILL.md              # 技能定义（触发条件、执行流程、输出交付物、执行红线）
-└── references/           # 参考文档（规范、模板、检查清单）
+├── SKILL.md              # Skill definition (trigger conditions, workflow, deliverables, constraints)
+└── references/           # Reference documents (specifications, templates, checklists)
     └── *.md
 ```
 
-部分 Skill 还包含：
-- `script/` — 可执行脚本（如扫描脚本、同步脚本）
-- `templates/` — 代码模板（如 Vue 组件模板、API 服务模板）
-- `backend/` / `frontend/` / `common/` — 分类文档
+Some skills also include:
+- `script/` — Executable scripts (e.g., scanning scripts, sync scripts)
+- `templates/` — Code templates (e.g., Vue component templates, API service templates)
+- `backend/` / `frontend/` / `common/` — Categorized documents
 
 ---
 
-## 数据产物目录
+## Data Artifacts Directory
 
-需求实现过程中的产物按以下目录组织：
+Artifacts produced during requirement implementation are organized as follows:
 
 ```
 ocspec-<xxx>/
-├── knowledge/                    # 知识库（持续积累）
-│   ├── code/<项目名>/            # 代码知识
-│   ├── application/              # 应用架构知识
-│   └── business/                 # 业务知识
+├── knowledge/                    # Knowledge base (continuously accumulated)
+│   ├── code/<project-name>/      # Code knowledge
+│   ├── application/              # Application architecture knowledge
+│   └── business/                 # Business knowledge
 └── requirements/
-    └── <需求英文名>_<yyyymmdd>/
-        ├── requirement/          # 需求文档
-        ├── design/               # 设计文档
-        ├── task/                 # 任务拆分
-        ├── review/               # 代码审查
-        └── archive/              # 归档文档
+    └── <requirement-name>_<yyyymmdd>/
+        ├── requirement/          # Requirement documents
+        ├── design/               # Design documents
+        ├── task/                 # Task splitting
+        ├── review/               # Code review
+        └── archive/              # Archive documents
 ```
 
 ---
 
+## Best Practices
 
+### Session Management
+
+Since AI context windows are limited, it is recommended to:
+
+1. Use a separate session for each pipeline stage
+2. The three knowledge restoration stages can be combined into one session
+3. Backend and frontend design should be in the same session
+4. For code implementation with many tasks, split into multiple sessions (by module)
+5. Use a separate session for the archiving stage
+
+### Common Anti-Patterns
+
+| Anti-Pattern | Problem | Correct Approach |
+|--------------|---------|------------------|
+| Skipping knowledge restoration | AI lacks project understanding, low output quality | Always execute Stage 2 |
+| Designing backend and frontend separately | Interface misalignment, integration difficulties | Complete in the same session |
+| Coding without task splitting | Uncontrollable progress, missed requirements | Run task-split before implementation |
+| Archiving without review | Quality issues carried into archive | Review first, then archive |
+| Running the full pipeline at once | Context too long, quality degrades | Execute in stages and sessions |
+
+---
+
+## Contributing
+
+We welcome all forms of contribution!
+
+### Report Issues
+
+If you find a bug or have an improvement suggestion, please submit an [Issue](https://github.com/pengguogo/ai-coding-skills/issues).
+
+### Submit Code
+
+1. Fork this repository
+2. Create a feature branch: `git checkout -b feature/my-feature`
+3. Commit changes: `git commit -am 'Add some feature'`
+4. Push the branch: `git push origin feature/my-feature`
+5. Submit a Pull Request
+
+### Commit Message Format
+
+```
+<type>(<scope>): <subject>
+
+<body>
+
+<footer>
+```
+
+**Types**: `feat` (new feature), `fix` (bug fix), `docs` (documentation), `style` (formatting), `refactor` (refactoring), `test` (testing), `chore` (build/tools)
 
 ---
 
