@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{DOMAIN_TITLE} — 业务架构</title>
+  <link rel="stylesheet" href="{CSS_PATH}case.css">
+  <script src="{JS_PATH}mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: 'dark',
+      securityLevel: 'loose',
+      flowchart: { curve: 'basis' }
+    });
+    document.addEventListener('DOMContentLoaded', function () {
+      mermaid.run({ querySelector: '.mermaid' });
+    });
+  </script>
+</head>
+<body>
+  <div class="page">
+    <a class="back-link" href="{BACK_LINK}">← 返回业务架构总览</a>
+    <h1>{DOMAIN_TITLE} — 业务架构</h1>
+    <div class="sub">
+      {BADGE_TAGS}
+      <span>{DOMAIN_SCOPE_SUMMARY}</span>
+    </div>
+
+    <div class="biz-desc">
+      <div class="biz-title">业务全景</div>
+      {BIZ_OVERVIEW}
+      <div class="note">
+        <strong>总览边界</strong>：{SCOPE_NOTE} 本页提供代码驱动的用例目录、数据模型及 ER 图，以支持领域与场景确认；尚未生成应用间或应用内时序页面。
+      </div>
+    </div>
+
+    <!-- ============ §1 参与者 ============ -->
+    <h2>1. 参与者 (Actors)</h2>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:180px">参与者</th>
+          <th style="width:90px">类型</th>
+          <th>职责与说明</th>
+        </tr>
+      </thead>
+      <tbody>
+        {ACTOR_TABLE_ROWS}
+      </tbody>
+    </table>
+
+    <!-- ============ §2 用例图 ============ -->
+    <h2>2. 用例图 (Use Case Diagram)</h2>
+    <p class="legend">
+      {UC_DIAGRAM_LEGEND} 用例按正式场景聚合，仅作为领域总览目录。
+    </p>
+    <div class="diagram">
+      <div class="mermaid">
+        {UC_DIAGRAM_MERMAID}
+      </div>
+      <div class="cap">{UC_DIAGRAM_CAPTION}</div>
+    </div>
+
+    <!-- ============ §3 用例清单 ============ -->
+    <h2>3. 用例清单 (Use Case Catalog)</h2>
+    <p class="nav-hint">
+      提示：本页仅沉淀代码驱动的用例目录；当前不提供用例时序跳转。
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:112px">编号</th>
+          <th style="width:170px">用例名称</th>
+          <th style="width:150px">主要参与者</th>
+          <th>核心说明</th>
+          <th style="width:160px">ServiceCode / 代码入口</th>
+        </tr>
+      </thead>
+      <tbody>
+        {UC_CATALOG_ROWS}
+      </tbody>
+    </table>
+    <div class="legend">{UC_CATALOG_LEGEND}</div>
+
+    <!-- ============ §4 数据模型 ============ -->
+    <h2>4. 数据模型 (Data Model)</h2>
+    <p class="dm-legend">{DATA_MODEL_LEGEND}</p>
+
+    <h3>4.1 实体汇总</h3>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:210px">实体 / 表</th>
+          <th style="width:120px">主键</th>
+          <th>关键字段</th>
+          <th>说明</th>
+        </tr>
+      </thead>
+      <tbody>
+        {ENTITY_TABLE_ROWS}
+      </tbody>
+    </table>
+
+    <h3>4.2 ER 图</h3>
+    <div class="diagram">
+      <div class="mermaid">
+        {ER_DIAGRAM_MERMAID}
+      </div>
+      <div class="cap">{ER_CAPTION}</div>
+    </div>
+
+    <div class="footer">
+      {FOOTER}
+    </div>
+  </div>
+</body>
+</html>

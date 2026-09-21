@@ -21,56 +21,56 @@ $dubboScanPkgs = [System.Collections.Generic.List[string]]::new()
 
 # === Phase 1: XML ===
 Get-ChildItem -Path $SourceRoot -Recurse -Filter "*.xml" | Where-Object {
-  $_.FullName -notlike "*\\target\\*" -and $_.FullName -notlike "*\\.git\\*"
+  $_.FullName -notlike "*\target\*" -and $_.FullName -notlike "*\.git\*"
 } | ForEach-Object {
   $xc = Get-Content $_.FullName -Raw -Encoding UTF8 -ErrorAction SilentlyContinue
   if (-not $xc) { return }
-  $rp = $_.FullName.Replace("$((Get-Location).Path)\\$SourceRoot\\", "").Replace('\\', '/')
-  foreach ($sm in [regex]::Matches($xc, '<dubbo:service\\s+([^>]+)>')) {
+  $rp = $_.FullName.Replace("$((Get-Location).Path)\$SourceRoot\", "").Replace('\', '/')
+  foreach ($sm in [regex]::Matches($xc, '<dubbo:service\s+([^>]+)>')) {
     $a = $sm.Groups[1].Value; $id=""; $if=""; $rf=""; $to=""
-    if ($a -match 'id\\s*=\\s*"([^"]+)"') { $id=$Matches[1] }
-    if ($a -match 'interface\\s*=\\s*"([^"]+)"') { $if=$Matches[1] }
-    if ($a -match 'ref\\s*=\\s*"([^"]+)"') { $rf=$Matches[1] }
-    if ($a -match 'timeout\\s*=\\s*"([^"]+)"') { $to=$Matches[1] }
+    if ($a -match 'id\s*=\s*"([^"]+)"') { $id=$Matches[1] }
+    if ($a -match 'interface\s*=\s*"([^"]+)"') { $if=$Matches[1] }
+    if ($a -match 'ref\s*=\s*"([^"]+)"') { $rf=$Matches[1] }
+    if ($a -match 'timeout\s*=\s*"([^"]+)"') { $to=$Matches[1] }
     if ($if) { $xmlServices.Add(@{id=$id;interface=$if;ref=$rf;timeout=$to;source=$rp}); $knownIfaces[$if]="xml-service"; $serviceCount++ }
   }
-  foreach ($rm in [regex]::Matches($xc, '<dubbo:reference\\s+([^>]+)/?\\s*>')) {
+  foreach ($rm in [regex]::Matches($xc, '<dubbo:reference\s+([^>]+)/?\s*>')) {
     $a = $rm.Groups[1].Value; $id=""; $if=""
-    if ($a -match 'id\\s*=\\s*"([^"]+)"') { $id=$Matches[1] }
-    if ($a -match 'interface\\s*=\\s*"([^"]+)"') { $if=$Matches[1] }
+    if ($a -match 'id\s*=\s*"([^"]+)"') { $id=$Matches[1] }
+    if ($a -match 'interface\s*=\s*"([^"]+)"') { $if=$Matches[1] }
     if ($if) { $xmlReferences.Add(@{id=$id;interface=$if;source=$rp}); $knownIfaces[$if]="xml-reference"; $referenceCount++ }
   }
 }
 
 # === Phase 2: @DubboService/@DubboReference + scan-packages ===
 Get-ChildItem -Path $SourceRoot -Recurse -Filter "*.java" | Where-Object {
-  $_.FullName -notlike "*\\target\\*" -and $_.FullName -notlike "*\\src\\test\\*" -and $_.FullName -notlike "*\\.git\\*"
+  $_.FullName -notlike "*\target\*" -and $_.FullName -notlike "*\src\test\*" -and $_.FullName -notlike "*\.git\*"
 } | ForEach-Object {
   $c = Get-Content $_.FullName -Raw -Encoding UTF8 -ErrorAction SilentlyContinue; if (-not $c) { return }
-  $rp = $_.FullName.Replace("$((Get-Location).Path)\\$SourceRoot\\", "").Replace('\\', '/')
+  $rp = $_.FullName.Replace("$((Get-Location).Path)\$SourceRoot\", "").Replace('\', '/')
   if ($c -match '@DubboService') {
     $ls = Get-Content $_.FullName -Encoding UTF8
-    $cl = ($ls | Select-String '^\\s*public\\s+(abstract\\s+)?class\\s+(\\w+)' | Select-Object -First 1)
+    $cl = ($ls | Select-String '^\s*public\s+(abstract\s+)?class\s+(\w+)' | Select-Object -First 1)
     if ($cl) {
       $cn = $cl.Matches[0].Groups[2].Value
-      $im = [regex]::Match($cl.Line, 'implements\\s+([\\w.]+)')
+      $im = [regex]::Match($cl.Line, 'implements\s+([\w.]+)')
       $if = if ($im.Success) { $im.Groups[1].Value } else { $cn }
       $annoServices.Add(@{class=$cn;interface=$if;source=$rp})
-      $imp = ($ls | Select-String "import\\s+[\\w.]+\\.$if\\s*;")
-      if ($imp) { $fi = ($imp | Select-Object -First 1).Line -replace 'import\\s+','' -replace '\\s*;',''; $knownIfaces[$fi]="annotation-service" }
+      $imp = ($ls | Select-String "import\s+[\w.]+\.$if\s*;")
+      if ($imp) { $fi = ($imp | Select-Object -First 1).Line -replace 'import\s+','' -replace '\s*;',''; $knownIfaces[$fi]="annotation-service" }
       $knownIfaces[$if]="annotation-service"; $serviceCount++
     }
   }
-  if ($c -match '@(EnableDubbo|DubboComponentScan)\\s*\\(') {
-    foreach ($pm in [regex]::Matches($c, '(?:scanBasePackages|basePackages)\\s*=\\s*\\{?\\s*"([^"]+)"')) { $dubboScanPkgs.Add($pm.Groups[1].Value) }
+  if ($c -match '@(EnableDubbo|DubboComponentScan)\s*\(') {
+    foreach ($pm in [regex]::Matches($c, '(?:scanBasePackages|basePackages)\s*=\s*\{?\s*"([^"]+)"')) { $dubboScanPkgs.Add($pm.Groups[1].Value) }
   }
 }
 # scan-packages from config files
 Get-ChildItem -Path $SourceRoot -Recurse -Include "application*.yml","application*.yaml","application*.properties" | Where-Object {
-  $_.FullName -notlike "*\\target\\*" -and $_.FullName -notlike "*\\.git\\*"
+  $_.FullName -notlike "*\target\*" -and $_.FullName -notlike "*\.git\*"
 } | ForEach-Object {
   $cc = Get-Content $_.FullName -Raw -Encoding UTF8 -ErrorAction SilentlyContinue
-  if ($cc -match 'dubbo[\\s.]*scan[\\s.]*base-packages\\s*[:=]\\s*(.+)') {
+  if ($cc -match 'dubbo[\s.]*scan[\s.]*base-packages\s*[:=]\s*(.+)') {
     foreach ($p in ($Matches[1].Trim() -split '[,;]')) { $pt=$p.Trim(); if ($pt) { $dubboScanPkgs.Add($pt) } }
   }
 }
@@ -80,15 +80,15 @@ $moduleDeps = @{}; $moduleHasDubbo = @{}; $rootGroupId = ""
 $rootPom = Join-Path $SourceRoot "pom.xml"
 if (Test-Path $rootPom) { $rpc = (Get-Content $rootPom -Raw -Encoding UTF8) -replace '(?s)<!--.*?-->',''; if ($rpc -match '<groupId>([^<]+)</groupId>') { $rootGroupId=$Matches[1].Trim() } }
 
-Get-ChildItem -Path $SourceRoot -Recurse -Filter "pom.xml" -Depth 2 | Where-Object { $_.FullName -notlike "*\\target\\*" -and $_.FullName -notlike "*\\.git\\*" } | ForEach-Object {
+Get-ChildItem -Path $SourceRoot -Recurse -Filter "pom.xml" -Depth 2 | Where-Object { $_.FullName -notlike "*\target\*" -and $_.FullName -notlike "*\.git\*" } | ForEach-Object {
   $pc = (Get-Content $_.FullName -Raw -Encoding UTF8 -ErrorAction SilentlyContinue) -replace '(?s)<!--.*?-->',''
   if (-not $pc) { return }
-  $md = $_.DirectoryName.Replace("$((Get-Location).Path)\\$SourceRoot\\", "").Replace('\\', '/')
-  $mn = if ($md -eq $_.DirectoryName) { "root" } else { ($md -split '[\\\\/]')[0] }
+  $md = $_.DirectoryName.Replace("$((Get-Location).Path)\$SourceRoot\", "").Replace('\', '/')
+  $mn = if ($md -eq $_.DirectoryName) { "root" } else { ($md -split '[\\/]')[0] }
   if ($pc -match 'dubbo') { $moduleHasDubbo[$mn]=$true }
   $deps = [System.Collections.Generic.List[string]]::new()
-  foreach ($dm in [regex]::Matches($pc, '<dependency>\\s*<groupId>([^<]+)</groupId>\\s*<artifactId>([^<]+)</artifactId>')) {
-    if ($dm.Groups[1].Value.Trim() -eq $rootGroupId -or $dm.Groups[1].Value.Trim() -eq '\${project.groupId}') { $deps.Add($dm.Groups[2].Value.Trim()) }
+  foreach ($dm in [regex]::Matches($pc, '<dependency>\s*<groupId>([^<]+)</groupId>\s*<artifactId>([^<]+)</artifactId>')) {
+    if ($dm.Groups[1].Value.Trim() -eq $rootGroupId -or $dm.Groups[1].Value.Trim() -eq '${project.groupId}') { $deps.Add($dm.Groups[2].Value.Trim()) }
   }
   $moduleDeps[$mn] = $deps
 }
@@ -117,10 +117,10 @@ $fwIfaces = @('Serializable','Comparable','Cloneable','AutoCloseable','Closeable
   'Predicate','Serde','Deserializer','Serializer','ControlMessage')
 $ggr = git -C $SourceRoot grep -n "public.*class.*implements" -- "*.java" 2>$null
 if ($ggr) { foreach ($ln in $ggr) {
-  if ($ln -match '[\\\\/](target|src[\\\\/]test)[\\\\/]' -or $ln -match '[\\\\/]\\.git[\\\\/]') { continue }
+  if ($ln -match '[\\/](target|src[\\/]test)[\\/]' -or $ln -match '[\\/]\.git[\\/]') { continue }
   $ps = $ln -split ':'; if ($ps.Count -lt 3) { continue }
   $mod = ($ps[0] -split '/')[0]
-  $m = [regex]::Match(($ps[2..($ps.Count-1)] -join ':'), 'class\\s+(\\w+).*implements\\s+([\\w,\\s<>]+)')
+  $m = [regex]::Match(($ps[2..($ps.Count-1)] -join ':'), 'class\s+(\w+).*implements\s+([\w,\s<>]+)')
   if ($m.Success) {
     foreach ($i in ($m.Groups[2].Value -split ',' | ForEach-Object { ($_.Trim() -split '<')[0].Trim() } | Where-Object { $_ -and $_ -notin $fwIfaces })) {
       if (-not $implIdx.ContainsKey($i)) { $implIdx[$i]=[System.Collections.Generic.List[object]]::new() }
@@ -134,13 +134,13 @@ $ifaceDefs = [System.Collections.Generic.List[object]]::new(); $ifaceMethodCount
 $SVC_PATTERN = '(Service|Facade|Remote|Rest|Api|Client)$'
 
 Get-ChildItem -Path $SourceRoot -Recurse -Filter "*.java" | Where-Object {
-  $_.FullName -notlike "*\\target\\*" -and $_.FullName -notlike "*\\src\\test\\*" -and $_.FullName -notlike "*\\.git\\*"
+  $_.FullName -notlike "*\target\*" -and $_.FullName -notlike "*\src\test\*" -and $_.FullName -notlike "*\.git\*"
 } | ForEach-Object {
-  $ls = Get-Content $_.FullName -Encoding UTF8; $c = $ls -join "\`n"
-  if ($c -notmatch 'public\\s+interface\\s+') { return }
-  $rp = $_.FullName.Replace("$((Get-Location).Path)\\$SourceRoot\\", "").Replace('\\', '/')
-  $pkg = ($ls | Select-String "^package " | Select-Object -First 1).Line -replace 'package\\s+','' -replace ';',''
-  $il = ($ls | Select-String '^\\s*public\\s+interface\\s+(\\w+)' | Select-Object -First 1)
+  $ls = Get-Content $_.FullName -Encoding UTF8; $c = $ls -join "`n"
+  if ($c -notmatch 'public\s+interface\s+') { return }
+  $rp = $_.FullName.Replace("$((Get-Location).Path)\$SourceRoot\", "").Replace('\', '/')
+  $pkg = ($ls | Select-String "^package " | Select-Object -First 1).Line -replace 'package\s+','' -replace ';',''
+  $il = ($ls | Select-String '^\s*public\s+interface\s+(\w+)' | Select-Object -First 1)
   if (-not $il) { return }
   $in = $il.Matches[0].Groups[1].Value; $fn = "$pkg.$in"
   $isDubbo=$false; $tag=""
@@ -152,26 +152,26 @@ Get-ChildItem -Path $SourceRoot -Recurse -Filter "*.java" | Where-Object {
   if (-not $isDubbo -and $dubboScanPkgs.Count -gt 0) { foreach ($sp in $dubboScanPkgs) { if ($pkg.StartsWith($sp)) { $isDubbo=$true; $tag="scan-pkg"; break } } }
   # Rule c: reverse implements cross-module
   if (-not $isDubbo -and $implIdx.ContainsKey($in) -and $in -match $SVC_PATTERN) {
-    $im = ($rp -split '[\\\\/]')[0]
+    $im = ($rp -split '[\\/]')[0]
     foreach ($ii in $implIdx[$in]) { if ($ii.implModule -ne $im -and $moduleHasDubbo.ContainsKey($ii.implModule)) { $isDubbo=$true; $tag="cross-impl"; break } }
   }
   # Rule d: Maven dep graph
-  if (-not $isDubbo) { $im=($rp -split '[\\\\/]')[0]; if ($apiModByDep.ContainsKey($im) -and $in -match $SVC_PATTERN) { $isDubbo=$true; $tag="maven-dep" } }
+  if (-not $isDubbo) { $im=($rp -split '[\\/]')[0]; if ($apiModByDep.ContainsKey($im) -and $in -match $SVC_PATTERN) { $isDubbo=$true; $tag="maven-dep" } }
   # Rule e: module name whitelist
-  if (-not $isDubbo) { $dn=($rp -split '[\\\\/]')[0]; if ($dn -match '-(api|interface|facade|client)(-|$)' -and $in -match $SVC_PATTERN) { $isDubbo=$true; $tag="module-name" } }
+  if (-not $isDubbo) { $dn=($rp -split '[\\/]')[0]; if ($dn -match '-(api|interface|facade|client)(-|$)' -and $in -match $SVC_PATTERN) { $isDubbo=$true; $tag="module-name" } }
   if (-not $isDubbo) { return }
 
   # Extract methods
   $methods = [System.Collections.Generic.List[object]]::new()
   foreach ($l in $ls) {
     $tl = $l.Trim()
-    if ($tl -match '^[@/\\*]' -or $tl -eq '' -or $tl -eq '}' -or $tl -match '^\\s*(default|static|package|import)\\s+' -or $tl -match '^\\s*public\\s+interface\\s+') { continue }
-    if ($tl -match '\\w+\\s+\\w+\\s*\\(') {
-      $sig = ($tl -replace '\\s*;\\s*$','' -replace '\\s*\\{.*','').Trim() -replace '^\\s*public\\s+',''
-      $pm = [regex]::Match($sig, '^(.+?)\\s+(\\w+)\\s*\\(([^)]*)\\)')
+    if ($tl -match '^[@/\*]' -or $tl -eq '' -or $tl -eq '}' -or $tl -match '^\s*(default|static|package|import)\s+' -or $tl -match '^\s*public\s+interface\s+') { continue }
+    if ($tl -match '\w+\s+\w+\s*\(') {
+      $sig = ($tl -replace '\s*;\s*$','' -replace '\s*\{.*','').Trim() -replace '^\s*public\s+',''
+      $pm = [regex]::Match($sig, '^(.+?)\s+(\w+)\s*\(([^)]*)\)')
       if ($pm.Success) {
         $pList = @(); $pStr = $pm.Groups[3].Value.Trim()
-        if ($pStr) { foreach ($p in ($pStr -split ',')) { $pt=($p.Trim() -replace '@\\w+(\\([^)]*\\))?\\s*','').Trim(); $pp=$pt -split '\\s+'; if ($pp.Count -ge 2) { $pList += "$($pp[-1]): $($pp[0..($pp.Count-2)] -join ' ')" } } }
+        if ($pStr) { foreach ($p in ($pStr -split ',')) { $pt=($p.Trim() -replace '@\w+(\([^)]*\))?\s*','').Trim(); $pp=$pt -split '\s+'; if ($pp.Count -ge 2) { $pList += "$($pp[-1]): $($pp[0..($pp.Count-2)] -join ' ')" } } }
         $methods.Add(@{name=$pm.Groups[2].Value;params=$(if($pList.Count -gt 0){$pList -join ', '}else{"-"});ret=$pm.Groups[1].Value.Trim()})
         $ifaceMethodCount++
       }
@@ -185,18 +185,18 @@ $LBL = @{ svc=[char]0x670D+[char]0x52A1+[char]0x66B4+[char]0x9732; ref=[char]0x6
 
 $mdLines.Add("## Dubbo $($LBL.svc) (dubbo:service / @DubboService)")
 $mdLines.Add(""); $mdLines.Add("| ID | $($LBL.iface) | Ref/Class | Timeout | $($LBL.src) |"); $mdLines.Add("|-----|-----------|-----------|---------|------|")
-foreach ($s in $xmlServices) { $to=if($s.timeout){"$($s.timeout)ms"}else{"-"}; $mdLines.Add("| $($s.id) | \`\`$($s.interface)\`\` | $($s.ref) | $to | XML: $($s.source) |") }
-foreach ($s in $annoServices) { $mdLines.Add("| - | \`\`$($s.interface)\`\` | $($s.class) | - | @DubboService: $($s.source) |") }
+foreach ($s in $xmlServices) { $to=if($s.timeout){"$($s.timeout)ms"}else{"-"}; $mdLines.Add("| $($s.id) | ``$($s.interface)`` | $($s.ref) | $to | XML: $($s.source) |") }
+foreach ($s in $annoServices) { $mdLines.Add("| - | ``$($s.interface)`` | $($s.class) | - | @DubboService: $($s.source) |") }
 
 $mdLines.Add(""); $mdLines.Add("## Dubbo $($LBL.ref) (dubbo:reference / @DubboReference)")
 $mdLines.Add(""); $mdLines.Add("| ID/Field | $($LBL.iface) | $($LBL.src) |"); $mdLines.Add("|----------|-----------|------|")
-foreach ($r in $xmlReferences) { $mdLines.Add("| $($r.id) | \`\`$($r.interface)\`\` | XML: $($r.source) |") }
+foreach ($r in $xmlReferences) { $mdLines.Add("| $($r.id) | ``$($r.interface)`` | XML: $($r.source) |") }
 
 $mdLines.Add(""); $mdLines.Add("## Dubbo $($LBL.def)"); $mdLines.Add("")
 $tagMap = @{"xml-service"=" [XML $($LBL.svc)]";"xml-reference"=" [XML $($LBL.ref)]";"annotation-service"=" [@DubboService]";"annotation-reference"=" [@DubboReference]"}
 foreach ($d in $ifaceDefs) {
   $ts = if ($tagMap.ContainsKey($d.knownTag)) { $tagMap[$d.knownTag] } else { "" }
-  $mdLines.Add("### $($d.name)$ts"); $mdLines.Add(""); $mdLines.Add("> \`\`$($d.fullName)\`\`"); $mdLines.Add("> $($LBL.src): $($d.source)"); $mdLines.Add("")
+  $mdLines.Add("### $($d.name)$ts"); $mdLines.Add(""); $mdLines.Add("> ``$($d.fullName)``"); $mdLines.Add("> $($LBL.src): $($d.source)"); $mdLines.Add("")
   $mdLines.Add("| $($LBL.mth) | $($LBL.prm) | $($LBL.ret) | $($LBL.desc) |"); $mdLines.Add("|------|------|------|------|")
   foreach ($m in $d.methods) { $mdLines.Add("| $($m.name) | $($m.params) | $($m.ret) |  |") }
   $mdLines.Add("")

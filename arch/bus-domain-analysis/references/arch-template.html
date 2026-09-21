@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>"{DOMAIN_TITLE} — 业务架构</title>
+<link rel="stylesheet" href="{CSS_PATH}case.css">
+<script src="{JS_PATH}mermaid.min.js"></script>
+<script>
+  mermaid.initialize({ startOnLoad:false, theme:'dark', securityLevel:'loose', flowchart:{ curve:'basis' } });
+  document.addEventListener('DOMContentLoaded', function(){ mermaid.run({ querySelector:'.mermaid' }); });
+</script>
+</head>
+<body>
+<div class="page">
+<a class="back-link" href="{BACK_LINK}">{BACK_LINK_TEXT}</a>
+<h1>{DOMAIN_TITLE} — 业务架构</h1>
+<div class="sub">
+  {BADGE_TAGS}
+</div>
+
+<div class="biz-desc">
+<div class="biz-title">业务全景</div>
+{BIZ_OVERVIEW}
+</div>
+
+<h2>1. 参与者 (Actors)</h2>
+<table>
+<tr><th style="width:180px">参与者</th><th style="width:90px">类型</th><th>职责与说明</th></tr>
+{ACTOR_TABLE_ROWS}
+</table>
+
+<h2>2. 用例图 (Use Case Diagram)</h2>
+<p class="legend">{UC_DIAGRAM_LEGEND}</p>
+<div class="diagram">
+<div class="mermaid">
+{UC_DIAGRAM_MERMAID}
+</div>
+<div class="cap">{UC_DIAGRAM_CAPTION}</div>
+</div>
+
+<h2>3. 用例清单 (Use Case Catalog)</h2>
+<p class="nav-hint">提示：点击下表任意用例行（带 <span style="color:var(--cyan)">↗</span> 标记）可跳转到该用例的应用间时序图。</p>
+<table>
+<tr><th style="width:112px">编号</th><th style="width:170px">用例名称</th><th style="width:150px">主要参与者</th><th>核心说明</th><th style="width:150px">ServiceCode / 代码入口</th></tr>
+{UC_CATALOG_ROWS}
+</table>
+{UC_CATALOG_LEGEND}
+
+<h2>4. 数据模型 (Data Model)</h2>
+{DATA_MODEL_LEGEND}
+
+<h3>4.1 实体汇总</h3>
+<table>
+<tr><th style="width:210px">实体 / 表</th><th style="width:120px">主键</th><th>关键字段</th><th>说明</th></tr>
+{ENTITY_TABLE_ROWS}
+</table>
+
+<h3>4.2 ER 图</h3>
+<div class="diagram">
+<div class="mermaid">
+{ER_DIAGRAM_MERMAID}
+</div>
+<div class="cap">{ER_CAPTION}</div>
+</div>
+
+<div class="footer">
+{FOOTER}
+</div>
+</div>
+<script>
+(function(){
+  var MAP = {UC_SCENARIO_MAP};
+  document.querySelectorAll('table tr').forEach(function(tr){
+    var c = tr.querySelector('td:first-child > code');
+    if(!c) return;
+    var id = c.textContent.trim();
+    if(!MAP[id]) return;
+    var href = MAP[id] + '/' + id + '_flow.html';
+    tr.classList.add('seqrow');
+    tr.title = '用例时序图：' + id;
+    tr.addEventListener('click', function(){ window.location.href = href; });
+    var ico = document.createElement('span'); ico.className = 'seq-ico'; ico.textContent = ' ↗';
+    c.parentNode.appendChild(ico);
+  });
+})();
+</script>
+</body>
+</html>

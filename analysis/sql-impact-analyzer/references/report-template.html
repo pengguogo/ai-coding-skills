@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数订正影响分析报告</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f7fa;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 50px 60px;
+        }
+        h1 {
+            text-align: center;
+            color: #1a1a2e;
+            font-size: 28px;
+            margin-bottom: 10px;
+            border-bottom: 3px solid #4a6cf7;
+            padding-bottom: 15px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 40px;
+        }
+        h2 {
+            color: #1a1a2e;
+            font-size: 22px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding-left: 15px;
+            border-left: 4px solid #4a6cf7;
+        }
+        h3 {
+            color: #2d3748;
+            font-size: 18px;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0 25px 0;
+            font-size: 14px;
+        }
+        th {
+            background: #4a6cf7;
+            color: #fff;
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 500;
+        }
+        td {
+            padding: 10px 15px;
+            border-bottom: 1px solid #e8ecf1;
+            vertical-align: top;
+        }
+        tr:hover td {
+            background: #f8f9ff;
+        }
+        .sql-block {
+            background: #1e1e2e;
+            color: #cdd6f4;
+            padding: 16px 20px;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            margin: 10px 0 20px 0;
+            line-height: 1.6;
+        }
+        .sql-block .keyword {
+            color: #89b4fa;
+        }
+        .sql-block .string {
+            color: #a6e3a1;
+        }
+        .sql-block .function {
+            color: #f9e2af;
+        }
+        .field-table td:first-child {
+            font-weight: 600;
+            color: #4a6cf7;
+            white-space: nowrap;
+        }
+        .impact-table th {
+            background: #5b8def;
+        }
+        .impact-table .source-cell {
+            font-size: 12px;
+            color: #6b7280;
+        }
+        .impact-table .source-cell code {
+            background: #eef2ff;
+            padding: 1px 5px;
+            border-radius: 3px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: #4a6cf7;
+            word-break: break-all;
+        }
+        .impact-table .trigger-cell code {
+            background: #f1f5f9;
+            padding: 1px 5px;
+            border-radius: 3px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+        }
+        .impact-table .conclusion-cell {
+            font-weight: 500;
+        }
+        .safe-tag {
+            color: #059669;
+        }
+        .warn-tag {
+            color: #d97706;
+        }
+        .danger-tag {
+            color: #dc2626;
+        }
+        .risk-table td:first-child {
+            white-space: nowrap;
+            font-weight: 700;
+        }
+        .risk-p0 {
+            color: #dc2626;
+            background: #fef2f2;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+        .risk-p1 {
+            color: #d97706;
+            background: #fffbeb;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+        .risk-p2 {
+            color: #2563eb;
+            background: #eff6ff;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+        .note {
+            background: #fffbeb;
+            border-left: 4px solid #f59e0b;
+            padding: 12px 18px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 14px;
+        }
+        .divider {
+            border: none;
+            border-top: 1px dashed #d1d5db;
+            margin: 30px 0;
+        }
+
+        .er-diagram {
+            margin: 20px 0;
+            padding: 20px;
+            background: #fafbff;
+            border: 1px solid #dbeafe;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+        .er-table {
+            margin: 8px 0;
+            font-size: 13px;
+        }
+        .er-table caption {
+            font-weight: 700;
+            color: #1e40af;
+            text-align: left;
+            padding: 8px 0;
+            font-size: 14px;
+        }
+        .er-table .field-impact {
+            background: #fff7ed;
+            font-weight: 600;
+            color: #c2410c;
+        }
+        .er-table .field-indirect {
+            background: #fffbf0;
+            color: #92400e;
+        }
+        .er-relation {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin: 12px 0;
+            flex-wrap: wrap;
+        }
+        .er-arrow {
+            color: #6b7280;
+            font-size: 13px;
+            padding: 20px 0;
+            white-space: nowrap;
+        }
+        .field-check-table td:first-child {
+            font-weight: 600;
+            color: #4a6cf7;
+        }
+        .sql-script {
+            background: #1e1e2e;
+            color: #cdd6f4;
+            padding: 16px 20px;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            overflow-x: auto;
+            margin: 10px 0 20px 0;
+            line-height: 1.5;
+            white-space: pre;
+        }
+        .sql-script .comment {
+            color: #6c7086;
+        }
+
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <!-- ==================== 标题区 ==================== -->
+    <h1>数订正影响分析报告</h1>
+    <p class="subtitle">生成日期：{YYYY-MM-DD} &nbsp;|&nbsp; 涉及模块：{模块1} / {模块2} / {模块3}</p>
+
+    <!-- ==================== 一、SQL 订正内容概览 ==================== -->
+    <h2>一、SQL 订正内容概览</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>目标表</th>
+                <th>涉及字段</th>
+                <th>目标 Key</th>
+                <th>SQL 概要</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>{表名}（{中文表含义}）</td>
+                <td>{字段1}, {字段2}</td>
+                <td>{WHERE 条件关键值}</td>
+                <td>{业务语义概要}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- SQL 原文（带语法高亮） -->
+    <div class="sql-block">
+<span class="keyword">UPDATE</span> {table_name}
+<span class="keyword">SET</span> {field} = <span class="string">'{value}'</span>,
+    last_change_date = <span class="function">DATE_FORMAT</span>(<span class="function">NOW</span>(), <span class="string">'%Y%m%d'</span>)
+<span class="keyword">WHERE</span> {condition};
+    </div>
+
+    <hr class="divider">
+
+    <!-- ==================== 二、订正字段合理性分析 ==================== -->
+    <h2>二、订正字段合理性分析</h2>
+
+    <h3>2.1 字段类型校验</h3>
+    <table class="field-check-table">
+        <thead><tr><th>SQL#</th><th>字段</th><th>Java类型</th><th>DB类型</th><th>SET值</th><th>类型匹配</th><th>长度约束</th><th>备注</th></tr></thead>
+        <tbody>{FIELD_TYPE_ROWS}</tbody>
+    </table>
+
+    <h3>2.2 合理值范围检查</h3>
+    <table>
+        <thead><tr><th>SQL#</th><th>字段</th><th>SET值</th><th>合理范围</th><th>匹配</th><th>说明</th></tr></thead>
+        <tbody>{FIELD_RANGE_ROWS}</tbody>
+    </table>
+
+    <h3>2.3 字段依赖一致性</h3>
+    <table>
+        <thead><tr><th>SQL#</th><th>依赖项</th><th>检查</th><th>结果</th></tr></thead>
+        <tbody>{FIELD_DEP_ROWS}</tbody>
+    </table>
+
+    <h3>2.4 WHERE 覆盖风险</h3>
+    <table>
+        <thead><tr><th>SQL#</th><th>WHERE条件</th><th>覆盖精确度</th><th>风险</th></tr></thead>
+        <tbody>{WHERE_RISK_ROWS}</tbody>
+    </table>
+
+    <hr class="divider">
+
+    <!-- ==================== 三、ER 模型关联影响 ==================== -->
+    <h2>三、ER 模型关联影响</h2>
+
+    <h3>3.1 数据模型全景</h3>
+    <div class="er-diagram">{ER_DIAGRAM}</div>
+
+    <h3>3.2 关联表清单</h3>
+    <table>
+        <thead><tr><th>关联表</th><th>关联方式</th><th>关联字段</th><th>影响字段</th><th>影响等级</th></tr></thead>
+        <tbody>{ER_RELATION_ROWS}</tbody>
+    </table>
+
+    <h3>3.3 字段影响详情</h3>
+    <table>
+        <thead><tr><th>源字段</th><th>关联表</th><th>关联字段</th><th>影响路径</th><th>风险</th></tr></thead>
+        <tbody>{ER_DETAIL_ROWS}</tbody>
+    </table>
+
+    <hr class="divider">
+
+    <!-- ==================== 四、重复数据影响分析 ==================== -->
+    <h2>四、重复数据影响分析</h2>
+
+    <h3>4.1 订正 SQL 重复风险</h3>
+    <table>
+        <thead><tr><th>SQL#</th><th>风险类型</th><th>说明</th><th>影响行数预估</th><th>风险</th></tr></thead>
+        <tbody>{DUP_SQL_ROWS}</tbody>
+    </table>
+
+    <h3>4.2 关联表重复风险</h3>
+    <table>
+        <thead><tr><th>关联表</th><th>风险场景</th><th>触发EOD/Job</th><th>可能产生的重复</th><th>风险</th></tr></thead>
+        <tbody>{DUP_RELATED_ROWS}</tbody>
+    </table>
+
+    <h3>4.3 验证脚本</h3>
+    <h4>订正前检查</h4>
+    <div class="sql-script">{CHECK_BEFORE_SQL}</div>
+
+    <h4>订正后验证</h4>
+    <div class="sql-script">{CHECK_AFTER_SQL}</div>
+
+    <h4>回滚脚本</h4>
+    <div class="sql-script">{ROLLBACK_SQL}</div>
+
+    <hr class="divider">
+
+    <!-- ==================== 五、逐条影响分析 ==================== -->
+    <h2>五、逐条影响分析</h2>
+
+    <!-- ===== SQL-N 模板（每条 SQL 重复此块） ===== -->
+    <h3>SQL-{N}：{表名}（{中文表含义}）</h3>
+
+    <p><strong>字段含义：</strong></p>
+    <table class="field-table">
+        <tr><td>{字段名}</td><td>{字段业务含义描述}</td></tr>
+    </table>
+
+    <!-- 整合后的影响分析表：后置功能 + 事实源 + 触发条件 + 影响结论 一体化 -->
+    <p><strong>影响分析：</strong></p>
+    <table class="impact-table">
+        <thead>
+            <tr>
+                <th>后置功能</th>
+                <th>触发条件</th>
+                <th>影响结论</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    {功能名称}（{类型}）
+                    <div class="source-cell"><code>{仓库名/模块路径/.../文件名}</code> 第{行号}行</div>
+                </td>
+                <td class="trigger-cell">
+                    <code>{WHERE 条件或代码判断逻辑}</code><br>
+                    — {补充说明}
+                </td>
+                <td class="conclusion-cell">
+                    <span class="safe-tag">✅ {安全结论}</span>
+                    <!-- 或 -->
+                    <span class="warn-tag">⚠️ {需关注结论}</span>
+                    <!-- 或 -->
+                    <span class="danger-tag">❌ {危险结论}</span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- 关键说明块（仅在有复杂间接触发逻辑时使用） -->
+    <div class="note">
+        <strong>关键说明：</strong>{重要的间接触发机制解释或 EOD 覆盖风险检查结果}
+    </div>
+
+    <hr class="divider">
+    <!-- ===== SQL-N 模板结束 ===== -->
+
+    <!-- ==================== 三、风险点汇总 ==================== -->
+    <h2>六、风险点汇总</h2>
+    <table class="risk-table">
+        <thead>
+            <tr>
+                <th>风险等级</th>
+                <th>风险点</th>
+                <th>说明</th>
+                <th>建议</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><span class="risk-p0">P0-高</span></td>
+                <td>{风险标题}</td>
+                <td>{影响说明，可用 <strong>加粗</strong> 和 <code>代码</code>}</td>
+                <td>{应对建议}</td>
+            </tr>
+            <tr>
+                <td><span class="risk-p1">P1-中</span></td>
+                <td>{风险标题}</td>
+                <td>{影响说明}</td>
+                <td>{应对建议}</td>
+            </tr>
+            <tr>
+                <td><span class="risk-p2">P2-低</span></td>
+                <td>{风险标题}</td>
+                <td>{影响说明}</td>
+                <td>{应对建议}</td>
+            </tr>
+        </tbody>
+    </table>
+
+</div>
+</body>
+</html>

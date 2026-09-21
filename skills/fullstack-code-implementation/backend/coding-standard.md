@@ -293,15 +293,15 @@ Map<String, Object> map = new HashMap<>(expectedSize);
 \`\`\`java
 /**
  * 用户服务类
- * 
+ *
  * <p>提供用户相关的业务操作，包括用户创建、查询、更新等功能。
- * 
+ *
  * <p>注意事项：
  * <ul>
  *   <li>所有操作都会记录操作日志</li>
  *   <li>删除操作为逻辑删除，不会物理删除数据</li>
  * </ul>
- * 
+ *
  * @author xxx
  * @since 1.0.0
  */
@@ -320,7 +320,7 @@ public class UserService {
 \`\`\`java
 /**
  * 根据用户ID获取用户信息
- * 
+ *
  * @param userId 用户ID，不能为null
  * @return 用户信息，如果用户不存在返回null
  * @throws BusinessException 当userId无效时抛出
@@ -401,17 +401,17 @@ public void process() {
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
-    
+
     @PostMapping("/create")
     public Result<UserVO> createUser(@RequestBody UserCreateDTO dto) {
         // ...
     }
-    
+
     @GetMapping("/{id}")
     public Result<UserVO> getUserById(@PathVariable Long id) {
         // ...
     }
-    
+
     @PutMapping("/update")
     public Result<Void> updateUser(@RequestBody UserUpdateDTO dto) {
         // ...
@@ -424,12 +424,12 @@ public class UserController {
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
-    
+
     @PostMapping  // ❌ 错误：不可省略 URL
     public Result<UserVO> createUser(@RequestBody UserCreateDTO dto) {
         // ...
     }
-    
+
     @GetMapping  // ❌ 错误：不可省略 URL
     public Result<UserVO> getUserById(@PathVariable Long id) {
         // ...
@@ -455,10 +455,10 @@ public class UserController {
 \`\`\`java
 @Service
 public class UserService {
-    
+
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-    
+
     // 构造函数注入
     public UserService(UserRepository userRepository, RoleRepository roleRepository) {
         this.userRepository = userRepository;
@@ -485,7 +485,7 @@ public class Result<T> {
     private Integer code;
     private String message;
     private T data;
-    
+
     public static <T> Result<T> success(T data) {
         Result<T> result = new Result<>();
         result.setCode(200);
@@ -493,7 +493,7 @@ public class Result<T> {
         result.setData(data);
         return result;
     }
-    
+
     public static <T> Result<T> error(Integer code, String message) {
         Result<T> result = new Result<>();
         result.setCode(code);
@@ -593,12 +593,12 @@ try {
 \`\`\`java
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    
+
     @ExceptionHandler(BusinessException.class)
     public Result<Void> handleBusinessException(BusinessException e) {
         return Result.error(e.getCode(), e.getMessage());
     }
-    
+
     @ExceptionHandler(Exception.class)
     public Result<Void> handleException(Exception e) {
         log.error("系统异常", e);
@@ -701,22 +701,22 @@ if (log.isDebugEnabled()) {
 @RequestMapping("/api/users")
 @Slf4j
 public class UserController {
-    
+
     @PostMapping("/create")
     public Result<UserVO> createUser(@RequestBody UserCreateDTO dto) {
         long startTime = System.currentTimeMillis();
-        log.info("创建用户接口入参: userId={}, username={}, email={}", 
+        log.info("创建用户接口入参: userId={}, username={}, email={}",
             dto.getUserId(), dto.getUsername(), maskEmail(dto.getEmail()));
-        
+
         try {
             UserVO result = userService.createUser(dto);
             long costTime = System.currentTimeMillis() - startTime;
-            log.info("创建用户接口出参: userId={}, username={}, 耗时={}ms", 
+            log.info("创建用户接口出参: userId={}, username={}, 耗时={}ms",
                 result.getUserId(), result.getUsername(), costTime);
             return Result.success(result);
         } catch (Exception e) {
             long costTime = System.currentTimeMillis() - startTime;
-            log.error("创建用户接口异常: userId={}, 耗时={}ms, error={}", 
+            log.error("创建用户接口异常: userId={}, 耗时={}ms, error={}",
                 dto.getUserId(), costTime, e.getMessage(), e);
             throw e;
         }
@@ -744,22 +744,22 @@ public class UserController {
 @Component
 @Slf4j
 public class ExternalSystemClient {
-    
+
     public ExternalResult callExternalAPI(ExternalRequest request) {
         String url = externalSystemConfig.getUrl() + "/api/endpoint";
-        log.info("调用外部系统请求: url={}, param1={}, param2={}", 
+        log.info("调用外部系统请求: url={}, param1={}, param2={}",
             url, request.getParam1(), request.getParam2());
-        
+
         long startTime = System.currentTimeMillis();
         try {
             ExternalResult result = httpClient.post(url, request);
             long costTime = System.currentTimeMillis() - startTime;
-            log.info("调用外部系统响应: success={}, costTime={}ms", 
+            log.info("调用外部系统响应: success={}, costTime={}ms",
                 result.isSuccess(), costTime);
             return result;
         } catch (Exception e) {
             long costTime = System.currentTimeMillis() - startTime;
-            log.error("调用外部系统异常: url={}, costTime={}ms, error={}", 
+            log.error("调用外部系统异常: url={}, costTime={}ms, error={}",
                 url, costTime, e.getMessage(), e);
             throw e;
         }
@@ -843,8 +843,8 @@ private Boolean deleted;
 userMapper.deleteById(userId); // 自动执行逻辑删除
 
 // 或手动更新
-UPDATE user_info 
-SET deleted = TRUE, deleted_time = NOW(), deleted_by = 'admin' 
+UPDATE user_info
+SET deleted = TRUE, deleted_time = NOW(), deleted_by = 'admin'
 WHERE id = ?;
 \`\`\`
 
@@ -871,10 +871,10 @@ WHERE id = ?;
 **示例**：
 \`\`\`sql
 -- 预置供应商信息
--- 杭州惠涵汽车配件有限公司
+-- 示例汽车配件有限公司
 INSERT INTO public.pts_party
 (id, party_code, party_name, party_type, is_receiving, is_supplier, status, created_by, created_at, updated_by, updated_at)
-VALUES (1991422941495710011, 'YC2601000003', '杭州惠涵汽车配件有限公司', 1, true, true, 1, 'SYSTEM', now(), 'SYSTEM', now());
+VALUES (1991422941495710011, 'YC2601000003', '示例汽车配件有限公司', 1, true, true, 1, 'SYSTEM', now(), 'SYSTEM', now());
 
 -- 用户表
 CREATE TABLE IF NOT EXISTS public.user_info (
@@ -1003,26 +1003,26 @@ logging:
 @SpringBootTest
 @AutoConfigureMockMvc
 class UserControllerTest {
-    
+
     @Autowired
     private MockMvc mockMvc;
-    
+
     @MockBean
     private UserService userService;
-    
+
     @Test
     void testCreateUser() throws Exception {
         // Given
         UserCreateDTO dto = new UserCreateDTO();
         dto.setUsername("testuser");
         dto.setEmail("test@example.com");
-        
+
         UserVO userVO = new UserVO();
         userVO.setUserId(1L);
         userVO.setUsername("testuser");
-        
+
         when(userService.createUser(any(UserCreateDTO.class))).thenReturn(userVO);
-        
+
         // When & Then
         mockMvc.perform(post("/api/users/create")
                 .contentType(MediaType.APPLICATION_JSON)

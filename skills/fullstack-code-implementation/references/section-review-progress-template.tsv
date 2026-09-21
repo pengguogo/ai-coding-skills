@@ -1,0 +1,3 @@
+batch_id	side	category_id	name	tasks	impl_status	review_status	review_verdict	user_confirmed	gate_status	notes
+BE-1	backend	1	示例后端主分类	1.1,1.2	pending	pending		no	PENDING	
+FE-1	frontend	1	示例前端主分类	（功能点内任务标题列表）	pending	pending		no	PENDING	

@@ -1,50 +1,50 @@
-# 统一归档输出正文标准（\`project-archive\`）
+﻿# 统一归档输出正文标准（`project-archive`）
 
-本文件定义 \`code-archive.md\`、\`appliaction-archive.md\`、\`businsess-archive.md\` 须包含的**具体章节与表格字段**。产出为 **Markdown 正文**（标题、段落、表格、列表）；**不以图片、截图或“待画图”替代文字**；若使用 Mermaid，须在图旁配有**可独立理解**的文字说明。
+本文件定义 `code-archive.md`、`appliaction-archive.md`、`business-archive.md` 须包含的**具体章节与表格字段**。产出为 **Markdown 正文**（标题、段落、表格、列表）；**不以图片、截图或“待画图”替代文字**；若使用 Mermaid，须在图旁配有**可独立理解**的文字说明。
 
 ## 产出物汇总原则（强制）
 
-- **需求目录内归档落点**：本期由 \`project-archive\` 产出的**端到端归档正文**（**独立技能**，一次覆盖前后端），写入 \`ocspec-<xxx>/requirements/<需求英文名>_<yyyymmdd>/archive/\` 根目录下：
-  - **\`code-archive.md\`**：代码、接口契约、数据与存储、前后端工程与实现追溯、与知识库的对照。
-  - **\`appliaction-archive.md\`**：应用层（页面/状态 → 接口 → 数据/外部依赖）的调用链、协同与非功能约束。
-  - **\`businsess-archive.md\`**：业务目标、范围、流程、规则、术语、前后端职责边界与需求追溯。
-- **归并方式**：来自需求文档、设计文档、\`task/task-split.md\`、\`ocspec-<xxx>/knowledge/code/<项目名>/\` 的条目；若仓库或需求目录下另有历史说明、interface-detail 类文件，**可按需摘要引用**写入上述归档文件之一。**不依赖**单端归档技能或子目录作为前置输入。禁止再新增与上述三者并列的「第四套」主交付物作为 \`project-archive\` 的必选项。
-- **知识库同步（强制）**：执行本技能时须**融合更新** \`ocspec-<xxx>/knowledge/code/<项目名>/frontend-project.md\` 与 **\`backend-project.md\`**，按本文件「知识库融合更新标准流程」章节定义的 **5 步流程**执行。此外须**按 \`backend_project_archive_standard.md\` 中的条件性检查清单逐项检查** \`backend-interface.md\`、\`backend-database.md\`、\`backend-external-dependency.md\`。编写 **\`appliaction-archive.md\`** 时须**参考**既有 \`ocspec-<xxx>/knowledge/application/\`，完成后按 5 步流程将增量融合到现有文档对应章节；编写 **\`businsess-archive.md\`** 时须**参考**既有 \`ocspec-<xxx>/knowledge/businsess/\`，完成后同样按 5 步流程就地融合（目录或分册结构由团队约定；避免重复时以交叉引用为主）。
+- **需求目录内归档落点**：本期由 `project-archive` 产出的**端到端归档正文**（**独立技能**，一次覆盖前后端），写入 `ocspec-<xxx>/requirements/<需求英文名>_<yyyymmdd>/archive/` 根目录下：
+  - **`code-archive.md`**：代码、接口契约、数据与存储、前后端工程与实现追溯、与知识库的对照。
+  - **`appliaction-archive.md`**：应用层（页面/状态 → 接口 → 数据/外部依赖）的调用链、协同与非功能约束。
+  - **`business-archive.md`**：业务目标、范围、流程、规则、术语、前后端职责边界与需求追溯。
+- **归并方式**：来自需求文档、设计文档、`task/task-split.md`、`ocspec-<xxx>/knowledge/code/<项目名>/` 的条目；若仓库或需求目录下另有历史说明、interface-detail 类文件，**可按需摘要引用**写入上述归档文件之一。**不依赖**单端归档技能或子目录作为前置输入。禁止再新增与上述三者并列的「第四套」主交付物作为 `project-archive` 的必选项。
+- **知识库同步（强制）**：执行本技能时须**融合更新** `ocspec-<xxx>/knowledge/code/<项目名>/frontend-project.md` 与 **`backend-project.md`**，按本文件「知识库融合更新标准流程」章节定义的 **5 步流程**执行。此外须**按 `backend_project_archive_standard.md` 中的条件性检查清单逐项检查**接口清单与数据模型（**新布局** `backend-interface/`、`backend-database/` 或**存量** `backend-interface.md`、`backend-database.md`；判定与融合规则见 `../code-knowledge-init/references/backend-knowledge-layout-compat.md`）及 `backend-external-dependency.md`。编写 **`appliaction-archive.md`** 时须**参考**既有 `ocspec-<xxx>/knowledge/application/`，完成后按 5 步流程将增量融合到现有文档对应章节；编写 **`business-archive.md`** 时须**参考**既有 `ocspec-<xxx>/knowledge/business/`，完成后同样按 5 步流程就地融合（目录或分册结构由团队约定；避免重复时以交叉引用为主）。
 - **信息归属速查**：
 
 | 信息类型　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　 | 归属归档文件　　　　　　 | 同步知识库（示例）　　　　　　　　　　　　　　 |
 | ----------------------------------------------------------------------------------------------------| --------------------------| ------------------------------------------------|
-| 接口 URL/方法、入参出参、错误/幂等/事务、interface-detail 索引、库表变更、\`backend-interface\` 对照 | \`code-archive.md\`　　　　| \`backend-project.md\`、\`backend-database.md\` 等 |
-| 前端路由/组件/目录、工程增量、新增修改文件列表　　　　　　　　　　　　　　　　　　　　　　　　　　 | \`code-archive.md\`　　　　| \`frontend-project.md\`　　　　　　　　　　　　　|
-| 端到端调用顺序、数据流、异常与回退、幂等/鉴权/降级（应用视角）　　　　　　　　　　　　　　　　　　 | \`appliaction-archive.md\` | \`knowledge/application/\`　　　　　　　　　　　 |
-| 业务目标、角色、流程、规则、需求追溯矩阵、业务侧开放问题　　　　　　　　　　　　　　　　　　　　　 | \`businsess-archive.md\`　 | \`knowledge/businsess/\`　　　　　　　　　　　　 |
+| 接口 URL/方法、入参出参、错误/幂等/事务、interface-detail 索引、库表变更、接口清单对照 | `code-archive.md`　　　　| `backend-project.md`、`backend-interface/` 或 `backend-interface.md`、`backend-database/` 或 `backend-database.md` 等 |
+| 前端路由/组件/目录、工程增量、新增修改文件列表　　　　　　　　　　　　　　　　　　　　　　　　　　 | `code-archive.md`　　　　| `frontend-project.md`　　　　　　　　　　　　　|
+| 端到端调用顺序、数据流、异常与回退、幂等/鉴权/降级（应用视角）　　　　　　　　　　　　　　　　　　 | `appliaction-archive.md` | `knowledge/application/`　　　　　　　　　　　 |
+| 业务目标、角色、流程、规则、需求追溯矩阵、业务侧开放问题　　　　　　　　　　　　　　　　　　　　　 | `business-archive.md`　 | `knowledge/business/`　　　　　　　　　　　　 |
 
-**与内置参考的关系**：同目录下 **\`frontend_project_archive_standard.md\`**、**\`backend_project_archive_standard.md\`** 为 \`project-archive\` **内置**字段与深度参考，用于 \`code-archive.md\` 中前后端章节的写法对齐；**不表示**须先执行其他技能。若团队同时维护与 \`frontend-project-archive\` / \`backend-project-archive\` 包内同源规范，以保持章节字段一致，可自行同步更新这两份内置参考。
+**与内置参考的关系**：同目录下 **`frontend_project_archive_standard.md`**、**`backend_project_archive_standard.md`** 为 `project-archive` **内置**字段与深度参考，用于 `code-archive.md` 中前后端章节的写法对齐；**不表示**须先执行其他技能。若团队同时维护与 `frontend-project-archive` / `backend-project-archive` 包内同源规范，以保持章节字段一致，可自行同步更新这两份内置参考。
 
-以下模板中 \`[填写]\` 为执行时替换内容；无信息时写 \`[需人工确认]\` 或「无」，禁止留空壳标题无说明。
+以下模板中 `[填写]` 为执行时替换内容；无信息时写 `[需人工确认]` 或「无」，禁止留空壳标题无说明。
 
 ---
 
-## 1. \`code-archive.md\`（代码、接口与实现追溯）
+## 1. `code-archive.md`（代码、接口与实现追溯）
 
-本节规定 **\`code-archive.md\` 合并前后端**须覆盖：需求摘要、前后端实现路径、接口清单与契约、库表变更、\`frontend-project.md\` 增量说明、可选的 interface-detail 追溯等；结构与字段深度参见同目录 **\`frontend_project_archive_standard.md\`**、**\`backend_project_archive_standard.md\`**，并与 \`task/task-split.md\`、知识库对齐。
+本节规定 **`code-archive.md` 合并前后端**须覆盖：需求摘要、前后端实现路径、接口清单与契约、库表变更、`frontend-project.md` 增量说明、可选的 interface-detail 追溯等；结构与字段深度参见同目录 **`frontend_project_archive_standard.md`**、**`backend_project_archive_standard.md`**，并与 `task/task-split.md`、知识库对齐。
 
 ### 1.1 必备章节结构
 
-\`\`\`markdown
+```markdown
 # 代码与接口归档（Code Archive）
 
 ## 1. 归档信息
 
 | 字段 | 内容 |
 |------|------|
-| 需求目录 | \`ocspec-<xxx>/requirements/<需求英文名>_<yyyymmdd>/\` |
+| 需求目录 | `ocspec-<xxx>/requirements/<需求英文名>_<yyyymmdd>/` |
 | 归档时间 | YYYY-MM-DD HH:mm |
 | 覆盖范围 | [本次涉及模块/功能点列表] |
 | 关联需求文档 | [路径或说明] |
-| 关联设计文档 | \`frontend-design.md\` / \`backend-design.md\` 路径（通常由 **\`fullstack-design\`** 产出） |
-| 关联任务拆分 | \`task/task-split.md\` |
-| 知识库项目路径 | \`ocspec-<xxx>/knowledge/code/<项目名>/\` |
+| 关联设计文档 | `architecture-design.md` / `backend-design.md` / `frontend-design.md` 路径（通常由 **`fullstack-design`** 产出） |
+| 关联任务拆分 | `task/task-split.md` |
+| 知识库项目路径 | `ocspec-<xxx>/knowledge/code/<项目名>/` |
 
 ## 2. 需求与范围摘要
 
@@ -62,11 +62,11 @@
 
 ### 3.1 后端实现路径摘要
 
-[来自 \`backend-design.md\` 与 task-split 后端任务；按模块或接口组列出]
+[来自 `backend-design.md` 与 task-split 后端任务；按模块或接口组列出]
 
 ### 3.2 前端实现路径摘要
 
-[来自 \`frontend-design.md\` 与 task-split 前端任务；按功能点或路由列出]
+[来自 `frontend-design.md` 与 task-split 前端任务；按功能点或路由列出]
 
 ## 4. 接口与契约（以后端为权威）
 
@@ -76,7 +76,7 @@
 |----------|------|-----|-----------------|----------|----------|-------------------|---------------------|
 | | | | | | | | |
 
-### 4.2 与知识库 \`backend-interface\` 的对照
+### 4.2 与知识库 `backend-interface` 的对照
 
 | 本需求接口 | 分册文件/条目 | 变更类型（新增/修改/不变） |
 |------------|---------------|---------------------------|
@@ -86,7 +86,7 @@
 
 | Controller | interface-detail 文件（路径） | 本期涉及接口条数 | 备注 |
 |------------|-------------------------|------------------|------|
-| | \`{Controller}-interface-detail.md\` | | |
+| | `{Controller}-interface-detail.md` | | |
 
 若无此类文件，写明「无」或「未生成」及是否计划补充。
 
@@ -98,7 +98,7 @@
 |------|----------|------|-------------------------|
 | | 新增/修改 | | |
 
-### 5.2 与 \`backend-database.md\` 的对照
+### 5.2 与知识库数据模型对照（`backend-database/` 或存量 `backend-database.md`）
 
 [引用或摘要知识库中相关段落]
 
@@ -111,7 +111,7 @@
 | 新增页面/路由 | | | |
 | 新增/修改组件 | | | |
 
-### 6.2 \`frontend-project.md\` 增量说明
+### 6.2 `frontend-project.md` 增量说明
 
 | 章节 | 是否更新 | 摘要 |
 |------|----------|------|
@@ -119,7 +119,7 @@
 | 接口调用清单 | 是/否 | |
 | 目录结构说明 | 是/否 | |
 
-若本次未更新 \`frontend-project.md\`，写明原因（例如尚未跑 project-spec 扫描或本期无前端变更）。
+若本次未更新 `frontend-project.md`，写明原因（例如尚未跑 project-spec 扫描或本期无前端变更）。
 
 ## 7. 实际实现内容（若已知）
 
@@ -141,26 +141,26 @@
 | 编号 | 问题 | 影响 | 状态 |
 |------|------|------|------|
 | | | | |
-\`\`\`
+```
 
 ---
 
-## 2. \`appliaction-archive.md\`（应用层：调用链与协同）
+## 2. `appliaction-archive.md`（应用层：调用链与协同）
 
 本文件描述**系统在应用层如何协同完成需求**：页面/客户端行为、调用后端接口的顺序、与数据及外部系统的协作。**必须有连续正文**；Mermaid 序列图仅作可选附录。
 
 ### 2.1 必备章节结构
 
-\`\`\`markdown
+```markdown
 # 应用层归档（Application Archive）
 
 ## 1. 归档信息
 
 | 字段 | 内容 |
 |------|------|
-| 需求目录 | \`ocspec-<xxx>/requirements/<需求英文名>_<yyyymmdd>/\` |
+| 需求目录 | `ocspec-<xxx>/requirements/<需求英文名>_<yyyymmdd>/` |
 | 归档时间 | YYYY-MM-DD HH:mm |
-| 对照/回写知识库 | \`ocspec-<xxx>/knowledge/application/\`（本期增量已合并则注明文件或分册） |
+| 对照/回写知识库 | `ocspec-<xxx>/knowledge/application/`（本期增量已合并则注明文件或分册） |
 
 ## 2. 应用边界与参与者
 
@@ -208,26 +208,26 @@
 | 编号 | 问题 | 影响范围 |
 |------|------|----------|
 | | | |
-\`\`\`
+```
 
 ---
 
-## 3. \`businsess-archive.md\`（业务层：目标、规则与职责）
+## 3. `business-archive.md`（业务层：目标、规则与职责）
 
 本文件面向**业务可读性**：目标、规则、流程、与需求条目对齐；**前后端职责分节书写**，避免混在一栏。
 
 ### 3.1 必备章节结构
 
-\`\`\`markdown
+```markdown
 # 业务归档（Business Archive）
 
 ## 1. 归档信息
 
 | 字段 | 内容 |
 |------|------|
-| 需求目录 | \`ocspec-<xxx>/requirements/<需求英文名>_<yyyymmdd>/\` |
+| 需求目录 | `ocspec-<xxx>/requirements/<需求英文名>_<yyyymmdd>/` |
 | 归档时间 | YYYY-MM-DD HH:mm |
-| 对照/回写知识库 | \`ocspec-<xxx>/knowledge/businsess/\`（本期增量已合并则注明文件或分册） |
+| 对照/回写知识库 | `ocspec-<xxx>/knowledge/business/`（本期增量已合并则注明文件或分册） |
 
 ## 2. 业务背景与目标
 
@@ -294,21 +294,21 @@
 | 编号 | 问题 | 待确认方（产品/架构/业务） |
 |------|------|----------------------------|
 | | | |
-\`\`\`
+```
 
 ---
 
 ## 4. 与可选单端归档实践的关系
 
-- **\`project-archive\` 独立交付**上述三份归档主文件，并更新 \`knowledge/code\` 下 project 与 \`knowledge/application\`、\`knowledge/businsess\`。
-- 团队若**另行**使用 \`frontend-project-archive\`、\`backend-project-archive\` 维护子目录或 interface-detail，可与本产出**并存**；执行 \`project-archive\` 时**不必**以单端归档为先决条件，仅需在材料存在时**引用路径与事实**即可。
+- **`project-archive` 独立交付**上述三份归档主文件，并更新 `knowledge/code` 下 project 与 `knowledge/application`、`knowledge/business`。
+- 团队若**另行**使用 `frontend-project-archive`、`backend-project-archive` 维护子目录或 interface-detail，可与本产出**并存**；执行 `project-archive` 时**不必**以单端归档为先决条件，仅需在材料存在时**引用路径与事实**即可。
 
 
 ---
 
 ## 5. 知识库融合更新标准流程
 
-> 本节定义归档完成后更新知识库文档时**必须**遵循的标准化操作流程。适用于 \`knowledge/application/\`、\`knowledge/businsess/\`、\`knowledge/code/<项目名>/\` 下所有文档的增量更新。
+> 本节定义归档完成后更新知识库文档时**必须**遵循的标准化操作流程。适用于 `knowledge/application/`、`knowledge/business/`、`knowledge/code/<项目名>/` 下所有文档的增量更新。
 
 ### 5.1 通用融合约束（5 步流程）
 
@@ -327,20 +327,20 @@
 归档与知识库更新全部完成后，须按以下清单逐项确认：
 
 **5.2.1 归档正文一致性**：
-- \`code-archive.md\`、\`appliaction-archive.md\`、\`businsess-archive.md\` 中的接口名、URL、需求编号、模块名与 \`task/task-split.md\` / 设计文档**无矛盾**；矛盾处标 \`[需人工确认]\` 并说明冲突来源。
+- `code-archive.md`、`appliaction-archive.md`、`business-archive.md` 中的接口名、URL、需求编号、模块名与 `task/task-split.md` / 设计文档**无矛盾**；矛盾处标 `[需人工确认]` 并说明冲突来源。
 
 **5.2.2 知识库更新完整性检查清单**（每项须明确记录结果）：
 
 | 检查项 | 目标文件 | 检查结果（填写） |
 |--------|----------|------------------|
-| 应用层知识已融合 | \`knowledge/application/\` | 已更新 / 本期未涉及 |
-| 业务层知识已融合 | \`knowledge/businsess/\` | 已更新 / 本期未涉及 |
-| 前端项目文档已融合 | \`frontend-project.md\` | 已更新 / 本期无前端变更 |
-| 后端项目文档已融合 | \`backend-project.md\` | 已更新 / 本期无后端变更 |
-| 接口清单已融合 | \`backend-interface.md\` | 已更新 / 本期无接口变更 |
-| 数据模型已融合 | \`backend-database.md\` | 已更新 / 本期无数据变更 |
-| 外部依赖已融合 | \`backend-external-dependency.md\` | 已更新 / 本期无依赖变更 |
+| 应用层知识已融合 | `knowledge/application/` | 已更新 / 本期未涉及 |
+| 业务层知识已融合 | `knowledge/business/` | 已更新 / 本期未涉及 |
+| 前端项目文档已融合 | `frontend-project.md` | 已更新 / 本期无前端变更 |
+| 后端项目文档已融合 | `backend-project.md` | 已更新 / 本期无后端变更 |
+| 接口清单已融合 | `backend-interface/` 或 `backend-interface.md`（注明实际布局） | 已更新 / 本期无接口变更 |
+| 数据模型已融合 | `backend-database/` 或 `backend-database.md`（注明实际布局） | 已更新 / 本期无数据变更 |
+| 外部依赖已融合 | `backend-external-dependency.md` | 已更新 / 本期无依赖变更 |
 
 **5.2.3 交叉一致性**：
 - 以上所有已更新的知识库文档与三份归档正文**无互斥表述**。
-- \`frontend-project.md\`、\`backend-project.md\` 已**体现本期功能增量**（非仅元数据变更）。
+- `frontend-project.md`、`backend-project.md` 已**体现本期功能增量**（非仅元数据变更）。

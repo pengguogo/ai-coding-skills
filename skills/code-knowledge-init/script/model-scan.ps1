@@ -17,9 +17,9 @@ if (-not (Test-Path $OutputDir)) { New-Item -ItemType Directory -Path $OutputDir
 
 function Clean-Comment {
   param([string]$raw)
-  $c = $raw -replace '/\\*\\*|\\*/|\\*|//', '' -replace '<[^>]+>', ''
-  $c = $c -replace '@(author|since|date|version|see|param|return|throws)\\b[^\\r\\n]*', ''
-  return ($c -replace '\\s+', ' ').Trim()
+  $c = $raw -replace '/\*\*|\*/|\*|//', '' -replace '<[^>]+>', ''
+  $c = $c -replace '@(author|since|date|version|see|param|return|throws)\b[^\r\n]*', ''
+  return ($c -replace '\s+', ' ').Trim()
 }
 
 function CamelToSnake {
@@ -38,10 +38,10 @@ $totalFieldCount = 0
 # Tier 3 (9): bo form result transfer contract schema types value aggregate
 $MODEL_DIRS = 'model|entity|dto|vo|domain|bean|pojo|event|request|response|param|command|data|message|payload|record|bo|form|result|transfer|contract|schema|types|value|aggregate'
 Get-ChildItem -Path $SourceRoot -Recurse -Filter "*.java" | Where-Object {
-  $dir = $_.DirectoryName.Replace('\\', '/')
+  $dir = $_.DirectoryName.Replace('\', '/')
   # Exclude test and target directories
-  if ($dir -match '[\\\\/](test|target)[\\\\/]') { return $false }
-  if ($dir -match '[\\\\/]\\.git[\\\\/]') { return $false }
+  if ($dir -match '[\\/](test|target)[\\/]') { return $false }
+  if ($dir -match '[\\/]\.git[\\/]') { return $false }
   # Match files in data model directories (any depth)
   $dir -match "/($MODEL_DIRS)(/|$)"
 } | ForEach-Object {
@@ -49,14 +49,14 @@ Get-ChildItem -Path $SourceRoot -Recurse -Filter "*.java" | Where-Object {
   $lines = Get-Content $_.FullName -Encoding UTF8
 
   # Skip interfaces, enums, abstract classes, annotations
-  $classLine = ($lines | Select-String '^\\s*public\\s+class\\s+(\\w+)' | Select-Object -First 1)
+  $classLine = ($lines | Select-String '^\s*public\s+class\s+(\w+)' | Select-Object -First 1)
   if (-not $classLine) { return }
   $className = $classLine.Matches[0].Groups[1].Value
 
   # Skip if class has ORM annotations (should have been caught by entity-scan)
-  if ($content -match '@(TableName|Entity|Table)\\b') { return }
+  if ($content -match '@(TableName|Entity|Table)\b') { return }
   # Skip if class has no fields (likely a marker interface or utility)
-  if (-not ($content -match '(private|protected)\\s+\\w+')) { return }
+  if (-not ($content -match '(private|protected)\s+\w+')) { return }
 
   # Extract class comment
   $classComment = ""
@@ -65,25 +65,25 @@ Get-ChildItem -Path $SourceRoot -Recurse -Filter "*.java" | Where-Object {
     $cLines = @()
     for ($i = $idx - 1; $i -ge 0; $i--) {
       $ln = $lines[$i].Trim()
-      if ($ln -match '^\\*/' -or $ln -match '^\\*' -or $ln -match '^/\\*\\*' -or $ln -match '^//') { $cLines = ,$ln + $cLines }
-      elseif ($ln -match '^@' -or $ln -match '^\\)' -or $ln -match '^\\w+\\s*=' -or $ln -match '^\\}') { continue }
+      if ($ln -match '^\*/' -or $ln -match '^\*' -or $ln -match '^/\*\*' -or $ln -match '^//') { $cLines = ,$ln + $cLines }
+      elseif ($ln -match '^@' -or $ln -match '^\)' -or $ln -match '^\w+\s*=' -or $ln -match '^\}') { continue }
       else { break }
     }
     $classComment = Clean-Comment ($cLines -join " ")
   }
 
   # Determine module from package path
-  $pkg = ($lines | Select-String "^package " | Select-Object -First 1).Line -replace 'package\\s+', '' -replace ';', ''
+  $pkg = ($lines | Select-String "^package " | Select-Object -First 1).Line -replace 'package\s+', '' -replace ';', ''
   $moduleName = "root"
-  if ($pkg -match "($MODEL_DIRS)\\.(\\w+)") { $moduleName = $Matches[2] }
+  if ($pkg -match "($MODEL_DIRS)\.(\w+)") { $moduleName = $Matches[2] }
   elseif ($pkg -match "($MODEL_DIRS)$") { $moduleName = "root" }
 
   # Check extends
-  $extMatch = [regex]::Match(($lines[$idx]), 'extends\\s+(\\w+)')
-  $extNote = if ($extMatch.Success) { "> extends \`\`$($extMatch.Groups[1].Value)\`\`" } else { "" }
+  $extMatch = [regex]::Match(($lines[$idx]), 'extends\s+(\w+)')
+  $extNote = if ($extMatch.Success) { "> extends ``$($extMatch.Groups[1].Value)``" } else { "" }
   # Check implements
-  $implMatch = [regex]::Match(($lines[$idx]), 'implements\\s+([\\w,\\s<>]+)\\s*\\{')
-  $implNote = if ($implMatch.Success) { "> implements \`\`$($implMatch.Groups[1].Value.Trim())\`\`" } else { "" }
+  $implMatch = [regex]::Match(($lines[$idx]), 'implements\s+([\w,\s<>]+)\s*\{')
+  $implNote = if ($implMatch.Success) { "> implements ``$($implMatch.Groups[1].Value.Trim())``" } else { "" }
 
   $tDesc = if ($classComment) { $classComment } else { $TAG_TODO }
 
@@ -91,10 +91,10 @@ Get-ChildItem -Path $SourceRoot -Recurse -Filter "*.java" | Where-Object {
   $fieldRows = [System.Collections.Generic.List[string]]::new()
   for ($i = 0; $i -lt $lines.Count; $i++) {
     $line = $lines[$i]
-    if ($line -match '^\\s*(private|protected|public)\\s+' -and $line -notmatch '\\bclass\\s' -and $line -match ';\\s*$' -and $line -notmatch '\\bstatic\\b') {
-      $fl = ($line.Trim() -replace ';.*', '' -replace '\\s*=\\s*.*', '').Trim()
-      $st = $fl -replace '^\\s*(private|protected|public)\\s+', '' -replace '\\b(final|volatile|transient)\\s+', ''
-      $ps = $st -split '\\s+'
+    if ($line -match '^\s*(private|protected|public)\s+' -and $line -notmatch '\bclass\s' -and $line -match ';\s*$' -and $line -notmatch '\bstatic\b') {
+      $fl = ($line.Trim() -replace ';.*', '' -replace '\s*=\s*.*', '').Trim()
+      $st = $fl -replace '^\s*(private|protected|public)\s+', '' -replace '\b(final|volatile|transient)\s+', ''
+      $ps = $st -split '\s+'
       if ($ps.Count -lt 2) { continue }
       $fName = $ps[-1]; $fType = ($ps[0..($ps.Count-2)] -join ' ').Trim()
 
@@ -102,7 +102,7 @@ Get-ChildItem -Path $SourceRoot -Recurse -Filter "*.java" | Where-Object {
       $fComment = ""
       for ($j = $i - 1; $j -ge 0; $j--) {
         $p = $lines[$j].Trim()
-        if ($p -match '^\\*/' -or $p -match '^\\*' -or $p -match '^/\\*\\*' -or $p -match '^//') { $fComment = $p + " " + $fComment }
+        if ($p -match '^\*/' -or $p -match '^\*' -or $p -match '^/\*\*' -or $p -match '^//') { $fComment = $p + " " + $fComment }
         elseif ($p -match '^@') { continue }
         else { break }
       }

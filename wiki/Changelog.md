@@ -4,6 +4,18 @@
 
 ---
 
+## v2.0.0 (2026-09-21)
+
+### 更新
+
+- 从最新技能源同步 Scheduler、共享 Agents 和完整步骤/检查点体系
+- 核心技能扩展为 19 个，并新增 5 个 analysis / arch / tools 专项技能
+- 新增 `product-requirement-analysis`、`knowledge-recheck`、`bug-fix` 与四类文档处理技能
+- `spec-skills-refresh` 默认指向公开 GitHub 仓库 `main` 分支
+- 移除内部仓库地址、分支、项目名、包名和公司示例
+
+---
+
 ## v1.0.0 (2026-06-10)
 
 ### 新增

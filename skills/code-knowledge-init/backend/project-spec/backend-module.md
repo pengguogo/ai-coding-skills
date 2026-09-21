@@ -198,7 +198,7 @@ flowchart LR
 #### 用户管理模块
 - **功能**: 用户注册、登录、权限管理、个人信息管理
 - **核心实体**: User, Role, Permission
-- **主要接口**: 
+- **主要接口**:
   - POST /api/users - 用户注册
   - POST /api/users/login - 用户登录
   - GET /api/users/{id} - 获取用户信息

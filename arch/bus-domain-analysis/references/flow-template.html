@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{PAGE_TITLE}</title>
+<link rel="stylesheet" href="{CSS_PATH}case.css">
+<script src="{JS_PATH}mermaid.min.js"></script>
+<script>
+  mermaid.initialize({ startOnLoad:false, theme:'dark', securityLevel:'loose' });
+  document.addEventListener('DOMContentLoaded', function(){ mermaid.run({ querySelector:'.mermaid' }); });
+</script>
+</head>
+<body>
+<div class="page">
+<a class="back-link" href="{BACK_LINK}">{BACK_LINK_TEXT}</a>
+<h1>{PAGE_TITLE}</h1>
+<div class="sub">{BADGE_TAGS}</div>
+
+<div class="uc">
+  <div class="uc-head"><span class="uc-id">{UC_ID}</span><span class="uc-name">{UC_NAME}</span><span class="uc-tag {UC_TAG_CLASS}">{UC_TAG_TEXT}</span></div>
+  <div class="uc-body">
+    <div class="uc-row"><div class="k">参与者</div><div class="v">{UC_PARTICIPANTS}</div></div>
+    <div class="uc-row"><div class="k">接口</div><div class="v">{UC_INTERFACE}</div></div>
+    <div class="uc-row"><div class="k">前置条件</div><div class="v">{UC_PRECONDITION}</div></div>
+    <div class="uc-row"><div class="k">后置条件</div><div class="v">{UC_POSTCONDITION}</div></div>
+    <div class="uc-row"><div class="k">主成功流程</div><div class="v">{UC_MAIN_FLOW}</div></div>
+    {UC_ALT_FLOW_ROW}
+    {UC_EXCEPTION_FLOW_ROW}
+    <div class="uc-row"><div class="k">业务规则</div><div class="v">{UC_BUSINESS_RULES}</div></div>
+  </div>
+</div>
+
+<h2>应用间时序（信息流 / 资金流）</h2>
+<div class="diagram">
+<div class="mermaid">
+{SEQ_DIAGRAM_MERMAID}
+</div>
+</div>
+
+<h2>信息流 / 资金流</h2>
+<table>
+<tr><th style="width:90px">类型</th><th>说明</th></tr>
+<tr><td>信息流</td><td>{INFO_FLOW}</td></tr>
+<tr><td>资金流</td><td>{FUND_FLOW}</td></tr>
+</table>
+
+<h2>数据模型串联（消费 / 改动）</h2>
+<p class="dm-legend"><span class="rw rw-r">读</span> 消费 · <span class="rw rw-w">写</span> 改动 · <span class="rw rw-rw">读写</span>{DM_LEGEND}</p>
+<table>
+<tr><th style="width:230px">数据模型(对象/库)</th><th style="width:130px">所在应用</th><th style="width:78px">访问</th><th>说明</th></tr>
+{DM_TABLE_ROWS}
+</table>
+
+<h2>关联功能时序图（应用内）</h2>
+{RELATED_HINT}
+<div class="nav-links">
+{RELATED_LINKS}
+</div>
+</div>
+</body>
+</html>

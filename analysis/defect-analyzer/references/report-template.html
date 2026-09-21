@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{问题简称} · 问题分析与修复方案</title>
+<style>
+  :root {
+    --bg: #f6f8fa; --card: #ffffff; --ink: #1f2328; --muted: #656d76;
+    --line: #d0d7de; --accent: #0969da; --accent-soft: #ddf4ff;
+    --green: #1a7f37; --green-soft: #dafbe1;
+    --orange: #9a6700; --orange-soft: #fff8c5;
+    --red: #cf222e; --red-soft: #ffebe9;
+    --code-bg: #0d1117; --code-ink: #e6edf3;
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;
+    background:var(--bg); color:var(--ink); line-height:1.7; }
+  .wrap { max-width:1080px; margin:0 auto; padding:32px 24px 80px; }
+  header { background:linear-gradient(135deg,#cf222e,#9a6700); color:#fff;
+    padding:36px 40px; border-radius:14px; margin-bottom:28px; box-shadow:0 6px 20px rgba(207,34,46,.18); }
+  header h1 { margin:0 0 8px; font-size:25px; }
+  header p { margin:2px 0; opacity:.94; font-size:14px; }
+  .badge { display:inline-block; background:rgba(255,255,255,.22); padding:2px 12px;
+    border-radius:20px; font-size:12px; margin-top:8px; }
+  .toc { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px 24px; margin-bottom:28px; }
+  .toc h2 { margin:0 0 12px; font-size:16px; color:var(--muted); }
+  .toc ol { margin:0; padding-left:20px; columns:2; }
+  .toc a { color:var(--accent); text-decoration:none; }
+  .toc a:hover { text-decoration:underline; }
+  section { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:26px 30px; margin-bottom:24px; }
+  h2.sec { margin:0 0 18px; font-size:20px; padding-bottom:10px; border-bottom:2px solid var(--accent-soft); }
+  h3 { font-size:16px; margin:22px 0 10px; color:var(--accent); }
+  p { margin:10px 0; }
+  code.inline { background:#eff1f3; padding:1px 6px; border-radius:5px;
+    font-family:"SFMono-Regular",Consolas,monospace; font-size:13px; color:#cf222e; }
+  pre { background:var(--code-bg); color:var(--code-ink); padding:16px 18px; border-radius:10px;
+    overflow-x:auto; font-family:"SFMono-Regular",Consolas,monospace; font-size:13px; line-height:1.6; }
+  pre .cmt { color:#8b949e; } pre .kw { color:#ff7b72; } pre .str { color:#a5d6ff; }
+  pre .add { color:#7ee787; } pre .del { color:#ffa198; }
+  .flow { background:#f8fafc; border:1px dashed var(--line); border-radius:10px; padding:16px 18px;
+    overflow-x:auto; font-family:"SFMono-Regular",Consolas,monospace; font-size:12.5px;
+    line-height:1.5; white-space:pre; color:var(--ink); }
+  table { width:100%; border-collapse:collapse; margin:14px 0; font-size:14px; }
+  th,td { border:1px solid var(--line); padding:8px 12px; text-align:left; vertical-align:top; }
+  th { background:var(--accent-soft); color:#0a3069; font-weight:600; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  td.ok { color:var(--green); font-weight:600; }
+  td.bad { color:var(--red); font-weight:600; }
+  .tag { display:inline-block; font-size:12px; padding:1px 9px; border-radius:20px; font-weight:600; margin-right:4px; }
+  .tag.a { background:var(--accent-soft); color:#0a3069; }
+  .tag.g { background:var(--green-soft); color:var(--green); }
+  .tag.o { background:var(--orange-soft); color:var(--orange); }
+  .tag.r { background:var(--red-soft); color:var(--red); }
+  .note { border-left:4px solid var(--accent); background:var(--accent-soft);
+    padding:10px 16px; border-radius:0 8px 8px 0; margin:14px 0; font-size:13.5px; }
+  .note.warn { border-color:var(--orange); background:var(--orange-soft); }
+  .note.danger { border-color:var(--red); background:var(--red-soft); }
+  .note.ok { border-color:var(--green); background:var(--green-soft); }
+  ul.src { margin:10px 0; padding-left:0; list-style:none; }
+  ul.src li { padding:6px 0 6px 26px; position:relative; border-bottom:1px dashed var(--line); }
+  ul.src li:before { content:"▸"; position:absolute; left:6px; color:var(--accent); }
+  .path { font-size:12px; color:var(--muted); font-family:Consolas,monospace; word-break:break-all; }
+  .stepitem { display:flex; gap:14px; margin:14px 0; }
+  .stepnum { flex:0 0 34px; height:34px; color:#fff; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; font-weight:700; }
+  .stepbody { flex:1; }
+  footer { text-align:center; color:var(--muted); font-size:12px; margin-top:30px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ==================== 标题区 ==================== -->
+  <header>
+    <h1>{问题简称} · 问题分析与修复方案</h1>
+    <p>{一句话点明核心矛盾：如 表A.字段X 与 表B.字段X 不自洽}</p>
+    <p>代码基线：<strong>{仓库/分支}</strong></p>
+    <span class="badge">{一句话概括分歧本质}</span>
+  </header>
+
+  <!-- ==================== 目录 ==================== -->
+  <nav class="toc">
+    <h2>目录</h2>
+    <ol>
+      <li><a href="#seq">一、链路时序分析</a></li>
+      <li><a href="#locate">二、问题定位</a></li>
+      <li><a href="#diverge">三、分歧维度</a></li>
+      <li><a href="#case">四、问题示例</a></li>
+      <li><a href="#impact">五、影响分析</a></li>
+      <li><a href="#fix">六、修复方案与逐条影响分析</a></li>
+      <li><a href="#verify">七、验证与防回归</a></li>
+    </ol>
+  </nav>
+
+  <!-- ==================== 一、链路时序分析（Step 2） ==================== -->
+  <section id="seq">
+    <h2 class="sec">一、链路时序分析</h2>
+    <p>{一句话说明：同一数据/状态在哪几条链路上被读写，为何可能不一致}</p>
+
+    <!-- 每条链路一个 flow 块，保留缩进/箭头/注释 -->
+    <h3>链路 A：{角色，如"账单出单（权威值）"}</h3>
+    <p class="path">{入口文件路径}</p>
+    <div class="flow">{入口方法}()
+   │
+   ├─ {分支条件1} → {处理}
+   └─ {分支条件2} → {处理}
+   ▼
+{写入点} ──► {目标表.字段}  ★权威值</div>
+
+    <h3>链路 B：{角色，如"另算一份"}</h3>
+    <p class="path">{入口文件路径}</p>
+    <div class="flow">{计算逻辑}
+   │  ✗ {缺失的规则1}
+   │  ✗ {缺失的规则2}
+   ▼
+{写入点} ──► {目标表.字段}</div>
+
+    <h3>链路 C：{消费方，如"EOD 判定"}</h3>
+    <p class="path">{入口文件路径}</p>
+    <div class="flow">{查询条件 WHERE ...}
+   │
+   ▼
+{判断逻辑}  <span class="cmt">// 第xxx行</span>
+   ★ {以哪条链路的值为准}</div>
+
+    <div class="note danger"><strong>矛盾点：</strong>{说明两条链路为何不一致 / 时序为何错位}</div>
+  </section>
+
+  <!-- ==================== 二、问题定位（Step 3） ==================== -->
+  <section id="locate">
+    <h2 class="sec">二、问题定位</h2>
+    <p>{一句话根因结论：定位到确切代码机制}</p>
+
+    <h3>问题代码</h3>
+    <pre><span class="cmt">// {文件名} ~{行号}</span>
+{正常代码}
+<span class="del">{错误行}</span>  <span class="cmt">// ✗ {错误原因}</span>
+{正常代码}</pre>
+
+    <h3>问题点清单</h3>
+    <table>
+      <thead><tr><th>文件</th><th>大致行号</th><th>场景</th><th>问题取数/逻辑</th></tr></thead>
+      <tbody>
+        <tr><td>{文件名}</td><td>~{行号}</td><td>{场景}</td><td>{错误逻辑}</td></tr>
+      </tbody>
+    </table>
+    <p class="path">{涉及目录路径}</p>
+  </section>
+
+  <!-- ==================== 三、分歧维度（Step 4 第1部分） ==================== -->
+  <section id="diverge">
+    <h2 class="sec">三、分歧维度</h2>
+    <p>{说明：正确链路会处理哪些情况，问题链路全部/部分没覆盖}</p>
+    <table>
+      <thead><tr><th>#</th><th>正确链路会处理</th><th>问题链路是否处理</th><th>后果</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>{规则/边界/分支}</td><td class="bad">✗ 不处理</td><td>{偏差后果}</td></tr>
+        <tr><td>2</td><td>{规则}</td><td class="bad">✗ 不处理</td><td>{后果}</td></tr>
+      </tbody>
+    </table>
+    <div class="note warn">{边界一致条件：只有在什么条件下两者恰好一致，一旦某条件成立就必然出问题}</div>
+  </section>
+
+  <!-- ==================== 四、问题示例（Step 4 第2部分） ==================== -->
+  <section id="case">
+    <h2 class="sec">四、问题示例</h2>
+
+    <h3>示例1：{场景描述}</h3>
+    <p>{前提假设/配置}</p>
+    <table>
+      <thead><tr><th>输入（触发数据）</th><th>预期值（正确链路）</th><th>实际值（问题链路）</th><th>是否一致</th></tr></thead>
+      <tbody>
+        <tr><td>{输入}</td><td>{预期}</td><td>{实际}</td><td class="ok">✅</td></tr>
+        <tr><td>{输入}</td><td>{预期}</td><td>{实际}</td><td class="bad">❌ 差{N}</td></tr>
+      </tbody>
+    </table>
+
+    <h3>后果直观描述</h3>
+    <div class="flow">{步骤1：正确值}
+                    ↓
+{步骤2：消费方用错误值判定}
+                    ↓
+{步骤3：业务差错}</div>
+  </section>
+
+  <!-- ==================== 五、影响分析（Step 5） ==================== -->
+  <section id="impact">
+    <h2 class="sec">五、影响分析</h2>
+    <table>
+      <thead><tr><th>影响面</th><th>说明</th><th>严重度</th></tr></thead>
+      <tbody>
+        <tr><td>{功能/指标}</td><td>{传导路径与业务后果}</td><td><span class="tag r">高</span></td></tr>
+        <tr><td>{功能/指标}</td><td>{后果}</td><td><span class="tag o">中</span></td></tr>
+        <tr><td>{功能/指标}</td><td>{后果}</td><td><span class="tag g">低</span></td></tr>
+      </tbody>
+    </table>
+    <div class="note"><strong>是否生产真实暴露，取决于配置（代码无法断定，需核对）：</strong>① {配置项A}；② {数据条件B}；③ {链路是否启用}。上述任一成立，就大概率存在存量偏差。</div>
+  </section>
+
+  <!-- ==================== 六、修复方案与逐条影响分析（Step 6） ==================== -->
+  <section id="fix">
+    <h2 class="sec">六、修复方案与逐条影响分析</h2>
+
+    <h3>6.1 变更点作用域分析（改代码前必做）</h3>
+    <p>{待改代码承担的职责与服务的所有场景；维护的不变量/契约（粒度、非空、排序、联动等）}</p>
+    <table>
+      <thead><tr><th>调用方 / 场景</th><th>事实源</th><th>期望行为 / 依赖的不变量</th></tr></thead>
+      <tbody>
+        <tr><td>{caller / 场景}</td><td><span class="path">{文件:行号}</span></td><td>{它要求这段代码保证什么}</td></tr>
+      </tbody>
+    </table>
+    <div class="note warn">{需业务/数据确认的作用域点：如"一个集合内是否只含同一周期数据"，及它如何影响修复选型}</div>
+
+    <h3>6.2 代码修复方案（只改缺陷路径，保持其他场景不变）</h3>
+    <p>{修复策略一句话；共享代码用护栏而非改公共逻辑；保留 null/边界兜底}</p>
+    <pre><span class="cmt">// {文件名} ~{行号}</span>
+<span class="del">{删除的错误行}</span>
+<span class="add">{新增的修复行（含边界兜底）}</span></pre>
+    <p><strong>逐调用方/场景影响确认：</strong></p>
+    <table>
+      <thead><tr><th>调用方 / 场景</th><th>修复后行为</th><th>判定</th></tr></thead>
+      <tbody>
+        <tr><td>{缺陷路径}</td><td>{修好}</td><td><span class="tag g">✅ 目标场景</span></td></tr>
+        <tr><td>{其他场景}</td><td>{保持不变}</td><td><span class="tag g">✅ 不受影响</span></td></tr>
+        <tr><td>{某场景}</td><td>{有变化}</td><td><span class="tag o">⚠️ 可接受（原因）</span></td></tr>
+      </tbody>
+    </table>
+    <div class="note warn">{副作用结论：是否给其他调用方/场景引入新副作用；是否需同步改配置}</div>
+
+    <h3>6.3 存量问题数据查询（先查后改）</h3>
+    <p>{说明：订正主键与目标值，为何要收窄范围}</p>
+    <pre><span class="cmt">-- 存量问题数据查询（已收窄范围，避免假阳性）</span>
+<span class="kw">SELECT</span> {订正主键}, {对比字段}
+<span class="kw">FROM</span> {表}
+<span class="kw">WHERE</span> {收窄条件1}   <span class="cmt">-- ★{为什么加}</span>
+  <span class="kw">AND</span> {收窄条件2}   <span class="cmt">-- ★{为什么加}</span>;</pre>
+    <div class="note danger"><strong>为什么必须收窄：</strong>① {排除合理差异}；② {限定受影响范围}；③ {补唯一键避免行膨胀}；④ {只取可安全订正的记录}。</div>
+
+    <h3>6.4 订正 SQL 与字段含义</h3>
+    <pre><span class="kw">UPDATE</span> {表}
+<span class="kw">SET</span> {字段} = {目标值},
+    last_change_date = {业务日期}
+<span class="kw">WHERE</span> {订正主键} = {值};</pre>
+    <table>
+      <thead><tr><th>字段</th><th>含义</th></tr></thead>
+      <tbody>
+        <tr><td><code class="inline">{字段}</code></td><td>{业务含义 + 是否核心触发字段}</td></tr>
+      </tbody>
+    </table>
+
+    <h3>6.5 订正后逐条影响分析</h3>
+    <table>
+      <thead><tr><th>后置功能</th><th>触发条件</th><th>影响结论</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>{功能名（EOD/在线/会计）}<br><span class="path">{文件:行号}</span></td>
+          <td><code class="inline">{条件原文}</code><br>{补充说明}</td>
+          <td><span class="tag r">❌ {危险结论}</span></td>
+        </tr>
+        <tr>
+          <td>{功能名}<br><span class="path">{文件:行号}</span></td>
+          <td><code class="inline">{条件原文}</code><br>{补充}</td>
+          <td><span class="tag o">⚠️ {需关注结论}</span></td>
+        </tr>
+        <tr>
+          <td>{功能名}<br><span class="path">{文件:行号}</span></td>
+          <td><code class="inline">{条件原文}</code><br>{补充}</td>
+          <td><span class="tag g">✅ {安全结论}</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note danger"><strong>关键说明（执行时机 / 覆盖风险）：</strong>{订正必须在什么时点执行、订正值是否会被 Job 覆盖}</div>
+  </section>
+
+  <!-- ==================== 七、验证与防回归（Step 6 第4部分） ==================== -->
+  <section id="verify">
+    <h2 class="sec">七、验证与防回归</h2>
+    <table>
+      <thead><tr><th>环节</th><th>动作</th></tr></thead>
+      <tbody>
+        <tr><td>数据校验</td><td>{订正后重跑差异查询确认一致}</td></tr>
+        <tr><td>回归测试</td><td>{用问题示例场景验证代码修复，覆盖边界}</td></tr>
+        <tr><td>上线巡检</td><td>{日终后定时跑差异比对，不一致即告警}</td></tr>
+      </tbody>
+    </table>
+
+    <h3>推荐执行顺序</h3>
+    <div class="flow">1. 确认影响范围（差异比对 + 配置核对 + 链路是否启用）
+        ↓
+2. 生成待订正主键清单并人工复核（区分可安全订正 / 需走差错流程）
+        ↓
+3. 备份 → 按主键订正安全记录；已被消费的错误数据逐户处理
+        ↓
+4. 验证对账 + 上线巡检告警</div>
+    <div class="note ok"><strong>一句话结论：</strong>{根因 + 修复要点 + 数据处理原则}</div>
+  </section>
+
+  <footer>
+    基于仓库 {仓库名} 源码分析整理 · {问题简称}
+  </footer>
+</div>
+</body>
+</html>

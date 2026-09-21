@@ -1,51 +1,15 @@
 # AI Coding Skills Wiki
 
-欢迎来到 **AI Coding Skills** 的官方 Wiki！
+AI Coding Skills 是一套由 Scheduler 驱动的端到端 AI 编程技能体系。当前仓库包含 19 个核心技能，以及 `analysis/`、`arch/`、`tools/` 下 5 个自包含专项技能。
 
----
+## 导航
 
-## 概述
+- [快速开始](Quick-Start.md)
+- [流水线总览](Pipeline-Overview.md)
+- [技能参考](Skills-Reference.md)
+- [目录结构](Directory-Structure.md)
+- [最佳实践](Best-Practices.md)
+- [常见问题](FAQ.md)
+- [贡献指南](Contributing.md)
 
-本仓库包含一套完整的 **E2E AI Coding Skills** 体系，覆盖从技能分发、环境初始化、知识还原、需求分析、技术方案设计、任务拆分、代码实现到项目归档的完整端到端 AI 编码流程。
-
-> 本技能体系从 E2E AI Coding 全流程报告提取并还原，保留了原始的目录结构和文件组织方式。
-
----
-
-## 核心理念
-
-| 理念 | 说明 |
-|------|------|
-| **🔧 规范化** | 每个阶段严格遵循标准化流程与规范引用，确保产出物结构一致、可审计 |
-| **🔗 可追溯** | 从需求到代码的全链路可追溯：REQ 编号 → 设计文档 → 任务拆分 → 代码实现 → 归档 |
-| **✅ 质量内建** | 质量不是事后检查，而是内建于每个阶段，贯穿全流程的质量保障 Skills |
-
----
-
-## 快速导航
-
-- [[快速开始|Quick-Start]] - 5 分钟上手指南
-- [[流水线概览|Pipeline-Overview]] - 8 个阶段的完整流程
-- [[技能参考|Skills-Reference]] - 12 个 Skills 的详细说明
-- [[目录结构|Directory-Structure]] - 项目和产出物的组织方式
-- [[贡献指南|Contributing]] - 如何参与贡献
-
----
-
-## 支持的工具
-
-本技能体系支持以下 AI 编码工具：
-
-- ✅ Cursor
-- ✅ Kiro
-- ✅ Trae
-- ✅ Claude Code
-- ✅ OpenCode
-
----
-
-## 最新版本
-
-当前版本：**v1.0.0**
-
-查看 [更新日志](Changelog) 了解最新动态。
+完整、最新的中文说明以仓库根目录 [README.zh.md](../README.zh.md) 为准。

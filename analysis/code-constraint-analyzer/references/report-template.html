@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{REPORT_TITLE}</title>
+<style>
+/* === 页面基础 === */
+body { font-family: -apple-system, "Microsoft YaHei", sans-serif; max-width: 1100px; margin: 0 auto; padding: 40px 20px; color: #1a1a2e; line-height: 1.8; background: #f8f9fa; }
+h1 { font-size: 2em; border-bottom: 3px solid #2563eb; padding-bottom: 12px; margin: 0 0 8px 0; }
+h2 { font-size: 1.4em; border-bottom: 2px solid #93c5fd; padding-bottom: 8px; margin-top: 40px; }
+h3 { font-size: 1.15em; margin-top: 28px; color: #1e40af; }
+
+/* === 元信息 === */
+.meta { font-size: 0.9em; color: #6b7280; margin-bottom: 24px; }
+.meta span { margin-right: 20px; }
+
+/* === Badge === */
+.badge { display: inline-block; padding: 4px 14px; border-radius: 14px; font-size: 0.85em; font-weight: 700; margin-left: 12px; }
+.badge-high { background: #fee2e2; color: #991b1b; }
+.badge-medium { background: #fef3c7; color: #92400e; }
+.badge-low { background: #d1fae5; color: #065f46; }
+
+/* === 汇总表 === */
+.summary { display: flex; gap: 16px; margin: 24px 0; flex-wrap: wrap; }
+.summary-card { flex: 1; min-width: 140px; text-align: center; padding: 20px; border-radius: 12px; }
+.summary-card.high-card { background: #fee2e2; border: 2px solid #fecaca; }
+.summary-card.medium-card { background: #fef3c7; border: 2px solid #fde68a; }
+.summary-card.low-card { background: #d1fae5; border: 2px solid #a7f3d0; }
+.summary-card .count { font-size: 2.5em; font-weight: 800; }
+.summary-card .label { font-size: 0.9em; color: #6b7280; margin-top: 4px; }
+
+/* === 表格 === */
+table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.9em; }
+th, td { border: 1px solid #d1d5db; padding: 10px 14px; text-align: left; vertical-align: top; }
+th { background: #eff6ff; font-weight: 600; white-space: nowrap; }
+tr:nth-child(even) { background: #f9fafb; }
+
+/* === 代码块 === */
+pre { background: #1e293b; color: #e2e8f0; padding: 16px 20px; border-radius: 8px; overflow-x: auto; font-size: 0.85em; line-height: 1.6; }
+code { font-family: "Cascadia Code", "JetBrains Mono", Consolas, monospace; }
+p code, li code { background: #e5e7eb; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; color: #1e40af; }
+.file-path { color: #6b7280; font-size: 0.85em; }
+.file-path code { background: none; color: #6b7280; }
+
+/* === 信息块 === */
+.note { border-left: 4px solid #2563eb; background: #eff6ff; padding: 12px 16px; margin: 16px 0; border-radius: 0 8px 8px 0; }
+.note.warn { border-color: #f59e0b; background: #fffbeb; }
+.note.danger { border-color: #dc2626; background: #fef2f2; }
+.note-title { font-weight: 700; margin-bottom: 4px; }
+
+/* === 方案对比 === */
+.before-after { display: flex; gap: 16px; margin: 16px 0; }
+.before-after > div { flex: 1; }
+.before-label { color: #dc2626; font-weight: 700; }
+.after-label { color: #10b981; font-weight: 700; }
+
+/* === TOC === */
+.toc { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px 24px; margin: 24px 0; }
+.toc h3 { margin-top: 0; }
+.toc ol { padding-left: 20px; }
+.toc li { margin: 4px 0; }
+
+/* === 打印 === */
+@media print { body { max-width: none; } .before-after { display: block; } }
+</style>
+</head>
+<body>
+
+<!-- PLACEHOLDER: {REPORT_TITLE} → 报告主标题，如 "无效代码 — 分析报告" -->
+<h1>{REPORT_TITLE}<span class="badge badge-{RISK_LEVEL_CLASS}">{RISK_LEVEL}</span></h1>
+
+<div class="meta">
+<!-- PLACEHOLDER: {META} → 代码库信息 + 扫描时间 -->
+{META}
+</div>
+
+<!-- PLACEHOLDER: {SUMMARY_CARDS} → 汇总卡片 -->
+<div class="summary">{SUMMARY_CARDS}</div>
+
+<!-- PLACEHOLDER: {TOC} → 目录 -->
+{TOC}
+
+<!-- PLACEHOLDER: {FINDINGS} → 每条发现的详细内容（文件+行号+代码片段+风险+方案） -->
+{FINDINGS}
+
+<!-- PLACEHOLDER: {SOLUTIONS} → 优化方案区（仅 high/medium 桶包含 before/after + 单测表） -->
+{SOLUTIONS}
+
+</body>
+</html>

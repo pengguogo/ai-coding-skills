@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{PAGE_TITLE}</title>
+<link rel="stylesheet" href="{CSS_PATH}case.css">
+<script src="{JS_PATH}mermaid.min.js"></script>
+<script>
+  mermaid.initialize({ startOnLoad:false, theme:'dark', securityLevel:'loose' });
+  document.addEventListener('DOMContentLoaded', function(){ mermaid.run({ querySelector:'.mermaid' }); });
+</script>
+</head>
+<body>
+<div class="page">
+<div class="nav-hint">本功能被以下用例共用，返回任一关联用例时序图：</div>
+{BACK_LINKS}
+<h1>{APP_TITLE} · {FUNC_NAME} — 功能时序图（应用内）</h1>
+<div class="sub">{BADGE_TAGS}</div>
+
+<div class="dep-tags">
+{DEP_TAGS}
+</div>
+
+<p class="dm-legend">{FUNC_DESC_NOTE}</p>
+
+<h2>应用内分层时序</h2>
+<div class="diagram">
+<div class="mermaid">
+{SEQ_DIAGRAM_MERMAID}
+</div>
+</div>
+
+<h2>方法功能描述</h2>
+<table>
+<tr><th style="width:250px">方法</th><th>功能描述</th></tr>
+{METHOD_ROWS}
+</table>
+
+<h2>逻辑分支说明</h2>
+<table>
+<tr><th style="width:200px">分支 / 条件</th><th>处理逻辑</th></tr>
+{BRANCH_ROWS}
+</table>
+
+<h2>外部依赖（功能 + 入口）</h2>
+<table>
+<tr><th>依赖</th><th>类型</th><th>功能 / 入口</th></tr>
+{DEPENDENCY_ROWS}
+</table>
+
+<h2>数据模型（应用模型关联 · 消费读 / 改动写）</h2>
+<p class="dm-legend"><span class="rw rw-r">读</span> 消费(SELECT) · <span class="rw rw-w">写</span> 改动(INSERT/UPDATE) · <span class="rw rw-rw">读写</span></p>
+<table>
+<tr><th style="width:200px">数据模型(表)</th><th style="width:200px">应用模型(实体 / 模块)</th><th style="width:78px">访问</th><th>字段 / 说明</th></tr>
+{DM_ROWS}
+</table>
+
+{STATE_MACHINE_BLOCK}
+
+<h2>配置项</h2>
+<table>
+<tr><th>配置</th><th>说明</th></tr>
+{CONFIG_ROWS}
+</table>
+</div>
+</body>
+</html>

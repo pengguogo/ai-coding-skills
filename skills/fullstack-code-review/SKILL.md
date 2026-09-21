@@ -1,178 +1,133 @@
 ---
 name: fullstack-code-review
-description: 设计驱动的全栈实现质量审查技能。对照设计文档（backend-design.md / frontend-design.md）、任务拆分（task/task-split.md）与编码规范，对 fullstack-code-implementation 产出的代码进行结构化审查，输出分级审查报告。审查覆盖四大维度：编码规范合规（BE-*/FE-*/CC-*）、后端业务实现质量（BQ-*）、前端业务实现质量（FQ-*）、改动影响分析（IA-*）。
+description: 前后端/移动端代码终审。基于设计文档和检查项清单，对全量代码变更做全局设计合规、模块级审查和影响分析，产出终审结论和 commit 建议。读取小节评审结果跳过已覆盖的 P0 级检查项。触发词：代码评审、终审、code review、全局审查、提交前审查。
+base-dir-scope: requirement
 ---
 
-# 前后端代码审查
-
-## 文档职责边界
-
-- 本文件（\`SKILL.md\`）负责：审查流程、输入输出、分流机制、结论判定、协作关系。
-- 审查检查项细则统一放 \`references/\`，本文件不展开具体检查项内容。
-- 审查报告模板放 \`references/common/review-report-template.md\`，本文件仅说明报告产出规则。
-- 如与项目既有规范冲突，以项目规范为准并显式说明差异。
-
-## 角色定位
-
-- 在 e2e 流程中位于 \`fullstack-code-implementation\` 之后、\`project-archive\` 之前。
-- 负责对已完成编码的前后端代码做质量审查，输出结构化审查报告。
-- **不修改代码**：仅输出发现与建议，由 implementation 技能或人工执行修复。
-- **不执行编译/构建/测试**：编译闸门由 implementation 技能负责，本技能在阶段 0 确认其状态。
+# 前后端/移动端代码终审
 
 ## 何时使用
 
-- \`fullstack-code-implementation\` 编码完成且编译闸门通过后，需要对代码做质量审查。
-- 开发者修复审查问题后，需要增量复审确认修复效果。
-- 用户说"审查代码""code review""CR""review 一下"等。
+### 终审触发条件
+- 全部编码任务完成，所有 task-split 主分类/功能点的代码已提交
+- 用户请求"终审"、"全局审查"、"提交前审查"
 
-## 前置输入
+## 核心能力
 
-- **设计文档**：\`design/backend-design.md\` 和/或 \`design/frontend-design.md\`。
-- **任务拆分**：\`task/task-split.md\`（确认审查范围与任务完成状态）。
-- **变更产物**：fullstack-code-implementation 产出的代码变更（新增/修改文件清单）。
-- **编码规范**（按需加载，位于 fullstack-code-implementation/references/ 下）：
-  - 后端：\`coding-standard.md\`
-  - 前端：\`coding_standard.md\`
-- **项目知识**（若存在）：\`knowledge/code/<项目名>/frontend-project.md\` 或 \`backend-project.md\`。
+- 基于设计文档和检查项执行全局设计合规审查
+- 按后端模块、前端功能点、Android 模块、iOS 模块分批完成代码终审
+- 分析数据、接口、流程和用户体验的跨模块影响
+- 追加评审日志，并在通过时生成 commit 建议
 
-## 执行流程
+## 执行原则
 
-### 步骤 0：前置校验
+- **设计驱动**：所有审查以 `backend-design.md` 和前端入口索引 `frontend-design.md`（经其定位各分端设计文件 `frontend-web.md` / `frontend-ios.md` / `frontend-android.md` / `frontend-hmos.md` / `frontend-h5.md`）为基线，不臆造审查标准
+- **分层加载**：按步骤按需加载检查项，不一次性加载全量规范
+- **增量追加**：审查结果追加到 `{WORKSPACE}/review/review-log.md`，不覆盖已有内容
+- **代码修改边界**：终审不修改代码，仅输出发现和建议
+- **不确定标注**：低确信度发现标注 `[需人工确认]`，跨模块问题标注 `[需全局确认]`
 
-- **目标**：确认审查前置条件满足。
-- **动作**：
-  1. 确认编译闸门已通过（从 implementation 执行日志或变更概要中读取后端编译 + 前端构建状态）。
-  2. 确认设计文档可达（\`backend-design.md\` 和/或 \`frontend-design.md\` 存在）。
-  3. 确认 \`task/task-split.md\` 存在且任务状态为已完成。
-  4. 收集变更文件清单（从变更概要或仓库 diff 获取）。
-- **检查点**：若前置条件不满足，输出阻断说明并终止，列明缺失项。
+## 规范来源
 
-### 步骤 1：上下文收集与分流
-
-- **目标**：建立审查上下文，将变更文件分流到对应审查集。
-- **动作**：
-  1. 读取设计文档，提取设计契约清单（接口列表、模型列表、组件列表、路由列表等）。
-  2. 读取 \`task/task-split.md\`，提取后端/前端任务清单及状态。
-  3. 从 \`backend-design.md\` 提取业务质量审查基线：
-     - §3.1.3 状态机定义（状态、转换规则）
-     - §3.2 各功能的幂等要求（系统侧/业务侧）
-     - §3.2 各功能的异常处理策略（重试/阻断/丢弃）
-     - §3.2 各功能的依赖接口（URL、超时、异常处理）
-     - §3.2 各功能的时序图（调用链顺序）
-     - §4 稳定性评估（限流/降级/熔断/监控/告警）
-     - §2.2 技术选型（缓存/MQ/分布式锁）
-  4. 从 \`frontend-design.md\` 提取前端质量审查基线：
-     - 接口对齐表（前后端字段级对齐）
-     - 错误处理章节（错误码→前端处理策略）
-     - 权限设计（按钮级/路由级）
-  5. 从 \`task/task-split.md\` 提取改动影响分析基线：
-     - 任务清单与完成状态
-     - 依赖关系与开放问题
-  6. 按文件后缀和路径分流变更文件：
-
-  | 分类 | 匹配规则 | 适用检查项 |
-  |------|----------|-----------|
-  | 后端 | \`.java\`, \`.xml\`（MyBatis）, \`.yml\`/\`.yaml\`（Spring）, \`.properties\`, \`.sql\` | BE-* + BQ-* + CC-* |
-  | 前端 | \`.vue\`, \`.tsx\`, \`.jsx\`, \`.ts\`（前端目录）, \`.js\`（前端目录）, \`.css\`, \`.scss\`, \`.less\` | FE-* + FQ-* + CC-* |
-  | 通用 | \`.md\`, \`.json\`, \`Dockerfile\`, \`.sh\` 等 | CC-* + IA-* |
-
-  7. 按需加载对应 references 检查项文档（后端集非空加载 BE-* + BQ-*，前端集非空加载 FE-* + FQ-*，CC-* 和 IA-* 始终加载）。
-  8. 若存在 \`frontend-project.md\` 或 \`backend-project.md\`，读取项目约定作为审查基准。
-- **检查点**：分流结果中无法判断归属的文件标记为 \`[需人工确认]\`。
-
-### 步骤 2：高层审查（设计合规 + 架构 + 业务质量 + 影响分析）
-
-- **目标**：从设计合规、架构、业务实现质量和改动影响四个层面发现系统性问题。
-- **动作**：
-  1. **设计实现一致性**：将步骤 1 的设计契约清单与代码变更交叉比对。
-     - 设计中有但代码中无 → blocking："设计要求的 [xxx] 未实现"。
-     - 代码中有但设计中无 → suggestion："[xxx] 超出设计范围，是否必要？"
-  2. **架构合规**：检查分层、依赖方向、模块边界（对照 \`references/common/cross-cutting-review.md\` CC-ARCH-* 检查项）。
-  3. **存量路径一致性**：新增文件路径是否与仓库现有同类文件并列（后端 §3.3.1、前端目录约定）。
-  4. **任务完整性**：\`task-split.md\` 中状态为 Done 的任务是否都有对应代码变更。
-  5. **后端业务实现质量审查**：对照 \`backend-design.md\` 中的设计基线，按 \`references/backend/business-quality-checklist.md\` 中 BQ-* 检查项审查核心业务逻辑（幂等/事务/一致性/并发/重试/状态机/异常处理）。
-  6. **前端业务实现质量审查**：对照 \`frontend-design.md\` 中的设计基线，按 \`references/frontend/frontend-quality-checklist.md\` 中 FQ-* 检查项审查前端交互健壮性（状态一致性/竞态/接口健壮性/操作防护/权限/数据安全）。
-  7. **改动影响分析**：对照 \`task/task-split.md\` 的任务依赖关系，按 \`references/common/impact-analysis-checklist.md\` 中 IA-* 检查项评估改动的影响范围、兼容性和回滚方案。
-- **检查点**：高层审查发现的 blocking 问题优先记录，可能影响后续逐文件审查的判断。
-
-### 步骤 3：逐文件审查（规范合规 + 代码质量）
-
-- **目标**：对每个变更文件做规范合规和代码质量检查。
-- **动作**：
-  1. 遍历后端审查集，按 \`references/backend/backend-review-checklist.md\` 中 BE-* 检查项逐项检查。
-  2. 遍历前端审查集，按 \`references/frontend/frontend-review-checklist.md\` 中 FE-* 检查项逐项检查。
-  3. 对所有文件按 \`references/common/cross-cutting-review.md\` 中 CC-* 检查项检查横切关注点。
-  4. 每个发现标注：检查项编号、文件路径与行号、严重性等级、问题描述（协作式提问风格）、修复建议、规范来源。
-  5. 对值得肯定的实现给出 praise。
-- **检查点**：blocking 和 important 级别发现必须有明确的修复建议和规范来源引用。
-
-### 步骤 4：总结与决策
-
-- **目标**：汇总审查结果，给出结论，输出报告。
-- **动作**：
-  1. 汇总所有发现，按严重性分组统计。
-  2. 按判定规则（见下文）给出审查结论。
-  3. 按 \`references/common/review-report-template.md\` 模板生成审查报告。
-  4. 向用户说明审查结论和后续建议。
-- **检查点**：
-  - 通过 → 可进入 \`project-archive\`。
-  - 有条件通过 → 列出需修复的 important 项，修复后复审。
-  - 不通过 → 列出 blocking 项，修复后复审。
-
-## 严重性分级
-
-| 级别 | 标识 | 含义 | 是否阻断 |
-|------|------|------|---------|
-| S1 | \`blocking\` | 必须修复：功能缺陷、安全漏洞、设计未实现、严重违规 | ✅ 阻断 |
-| S2 | \`important\` | 强烈建议修复：违反核心编码规范、AI 标记缺失、异常处理不完整 | ⚠️ 累计 ≥5 阻断 |
-| S3 | \`suggestion\` | 建议优化：可提升可读性或可维护性 | ❌ |
-| S4 | \`nit\` | 细微瑕疵：格式或风格偏好 | ❌ |
-| S5 | \`learning\` | 知识分享：介绍更优实践或设计模式 | ❌ |
-| S6 | \`praise\` | 值得肯定的优秀实践 | ❌ |
-
-## 审查结论判定规则
-
-| 结论 | 条件 |
+| 文档 | 用途 |
 |------|------|
-| ✅ 通过 | 无 blocking，important ≤ 2 |
-| ⚠️ 有条件通过 | 无 blocking，important 3~4 |
-| ❌ 不通过 | 存在 blocking，或 important ≥ 5 |
+| `references/p0/p0-backend-checklist.md` | 后端 P0 检查项 |
+| `references/p0/p0-frontend-checklist.md` | 前端 P0 检查项 |
+| `references/p0/p0-android-checklist.md` | Android P0 检查项 |
+| `references/common/cross-cutting-review.md` | 横切关注点检查项 |
+| `references/backend/backend-review-checklist.md` | 后端审查检查项 |
+| `references/backend/business-quality-checklist.md` | 后端业务质量检查项 |
+| `references/frontend/frontend-review-checklist.md` | 前端审查检查项 |
+| `references/frontend/frontend-quality-checklist.md` | 前端业务质量检查项 |
+| `references/android/android-review-checklist.md` | Android 审查检查项 |
+| `references/android/android-quality-checklist.md` | Android 业务质量检查项 |
+| `references/p0/p0-ios-checklist.md` | iOS P0 检查项 |
+| `references/ios/ios-review-checklist.md` | iOS 审查检查项 |
+| `references/ios/ios-quality-checklist.md` | iOS 业务质量检查项 |
+| `references/common/impact-analysis-checklist.md` | 影响分析检查项（含 IA-MOBILE 移动端维度） |
+| `references/common/review-log-template.md` | review-log 模板 |
+| `references/common/commit-suggestion-template.md` | commit 建议模板 |
 
-## 复审机制
+## 路径与目录约定
 
-修复后可重新触发本技能进行增量复审：
-1. 读取上一次审查报告。
-2. 仅针对上次 blocking 和 important 发现进行定向复查。
-3. 确认修复是否引入新问题。
-4. 输出增量审查报告，标注每条发现的状态变更（\`fixed\` / \`partially-fixed\` / \`not-fixed\` / \`new\`）。
+- **权威来源**：`{COMMANDS_ROOT}/scheduler-protocol.md` §1（含 §1.6）；`base-dir-scope: requirement`
+- **工作目录**：与编码阶段同一 `{BASE_DIR}`
+- **中间产物**：仅 `{BASE_DIR}/_workspace/review/`（评审日志、commit 建议、步骤摘要）
+- **输入只读**：`{DESIGN}/`、`{TASK}/`、`{REQ}/`；代码变更在 `repos.txt` 仓库内审查
+- **不修改代码**：仅写 review 目录下 Markdown；Init 须先输出 `[路径解析]`
 
-## 反馈风格
+## 执行入口
 
-采用**协作式反馈**：用"是否考虑…？"替代"必须改为…"；说明原因而非仅指出问题；规范硬性要求标注来源，个人建议标注"个人偏好"。详见 \`references/common/review-report-template.md\` 中的反馈示例。
+**你是这个技能的 Scheduler。** 按以下顺序启动：
 
-## 输出与交付物
+1. 读取 `{COMMANDS_ROOT}/scheduler-protocol.md` 获取编排规则
+2. 完成 Init（§1.0~§1.4）：复用当前需求的 `{BASE_DIR}`
+3. 按下方 phases/steps 声明，由编排协议的状态机驱动执行
 
-- **产出文件**：\`review/code-review-report.md\`（存放在需求目录下）。
-- **产出格式**：按 \`references/common/review-report-template.md\` 模板输出 Markdown。
-- **更新策略**：首次审查全量输出；复审增量输出，引用原报告编号。
+**读取 `{COMMANDS_ROOT}/scheduler-protocol.md` 后，按下方步骤声明开始执行。**
 
-## 规范引用（单一来源）
+## 与其他技能的关系
 
-- 后端编码规范审查检查项：\`references/backend/backend-review-checklist.md\`
-- 后端业务质量审查检查项：\`references/backend/business-quality-checklist.md\`
-- 前端编码规范审查检查项：\`references/frontend/frontend-review-checklist.md\`
-- 前端业务质量审查检查项：\`references/frontend/frontend-quality-checklist.md\`
-- 横切关注点检查项：\`references/common/cross-cutting-review.md\`
-- 改动影响分析检查项：\`references/common/impact-analysis-checklist.md\`
-- 审查报告模板：\`references/common/review-report-template.md\`
-- 后端编码规范（上游源，位于 fullstack-code-implementation/references/backend/）：\`coding-standard.md\`
-- 前端编码规范（上游源，位于 fullstack-code-implementation/references/frontend/）：\`coding_standard.md\`
+- **上游**：`task-split` 提供任务清单（`task/task-split.md`）
+- **下游**：`project-archive` 依赖终审通过结论
+- **小节评审**：在 `fullstack-code-implementation` 各批次完成后执行（Step 2），由 `code-reviewer` 按 P0 审查；门禁见 `references/batch-gate-protocol.md`（停轮语义见 `scheduler-protocol.md` §12）
 
-## 执行红线
+> 上述为默认上下游关系；用户亦可单独指定使用本技能，提供输入后直接执行。
 
-1. 不直接修改源代码，仅输出审查发现与建议。
-2. 不在 \`SKILL.md\` 重复维护检查项细则，统一引用 \`references/\`。
-3. 不绕过项目既有约束（技术栈、目录结构、接口规范等）。
-4. 不忽略不确定项，需明确标记 \`[需人工确认]\`。
-5. 不臆造设计文档中不存在的审查基线。
-6. blocking 和 important 发现必须引用具体规范条款，不凭主观判断。
+---
+
+## Phases
+
+### Phase: review
+
+halt-after: true
+
+- Step 1: steps/step-01-review-context.md
+- Step 2: steps/step-02-global-compliance.md
+- Step 3: steps/step-03-backend-review.md
+- Step 3b: steps/step-03b-android-review.md  # 与 Step 3/4 无数据依赖，可并行；仅当存在 Android 模块时执行，否则跳过
+- Step 3c: steps/step-03c-ios-review.md  # 与 Step 3/3b/4 无数据依赖，可并行；仅当存在 iOS 模块时执行，否则跳过
+- Step 4: steps/step-04-frontend-review.md  # Step 3 与 Step 4 无数据依赖，Scheduler 可并行执行
+- Step 5: steps/step-05-impact-analysis.md
+- Step 6: steps/step-06-summary-delivery.md
+
+### Phase: incremental-recheck
+
+halt-after: true
+entry-condition: review-log.md 最终判定 = ❌ 不通过，且用户触发"增量复核"/"recheck"
+repeatable: true
+max-repeats: 3  # 超过 3 轮仍不通过，强制要求人工介入
+
+- Step 7: steps/step-07-incremental-recheck.md
+- → 复核通过后重新执行 Step 6（汇总判定与终审交付）
+
+---
+
+## 交付物
+
+- `{WORKSPACE}/review/review-log.md`（终审章节 + 增量复核章节追加到已有的评审日志中）
+- `{WORKSPACE}/review/commit-suggestion.md`（仅终审通过时生成）
+
+## Summary 机制
+
+Step 1~5（含 Step 3b、Step 3c）的产出均有下游依赖，需生成结构化摘要供 Step 6 使用。
+
+各步骤 Summary 配置见各 step 文件中的"Summary 配置"章节。
+
+使用规则：
+- subagent 模式：下游步骤读 Summary 路径
+- 同 session 模式：下游步骤读完整产出路径
+
+## 动态分批规则
+
+Step 3、Step 3b、Step 3c 和 Step 4 为 template dynamic 类型，Scheduler 按 `scheduler-protocol.md §3.4` 的 10 步流程自动执行动态实例化。Step 3 按后端模块分批，Step 3b 按 Android 模块分批，Step 3c 按 iOS 模块分批，Step 4 按前端功能点分批。各实例的 Summary 由 Scheduler 按 merge-rule 合并。
+
+> **Step 3b / Step 3c 条件执行**：仅当 `01-review-context.md` 对应的「Android 模块清单」/「iOS 模块清单」非空时实例化；本需求无对应端时，Scheduler 跳过该 Step，不产生产出与 Summary。
+
+## 增量复核机制
+
+Phase 2（incremental-recheck）在终审不通过时由用户手动触发，支持循环执行（最多 3 轮）：
+1. Step 7 复核旧发现 + 修复文件 P0 快扫
+2. 复核通过 → 重新执行 Step 6 生成最终交付物
+3. 复核不通过 → 等待下一轮修复后再次触发
+4. 超过 3 轮仍不通过 → 强制要求人工介入，不再自动复核

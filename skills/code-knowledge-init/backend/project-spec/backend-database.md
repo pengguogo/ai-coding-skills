@@ -26,7 +26,7 @@
 
 **无集中式 DDL 时的补充数据来源**（集中式 DDL 指项目根目录或专用目录（如 \`db/\`、\`sql/\`、\`migration/\`、\`flyway/\`、\`liquibase/\`）下统一存放的建表脚本。散落在各模块 \`resources/\` 下的 SQL 文件也视为集中式 DDL，只要其路径可通过 grepSearch 统一匹配）：
 - 若仓库中**未发现集中式建表脚本目录**（如 \`db/migration\`、\`sql/ddl\`、\`**/*.sql\` 等，以项目实际路径为准），则须从以下来源**补充表与 ER 信息**，仍保证全量表展示与表关系说明：
-  - **实体别名包（MyBatis/MyBatis-Plus）**：从 MyBatis/MyBatis-Plus 配置中读取 \`typeAliasesPackage\`（如 \`ocss.cms.service.entity\`），扫描该包下所有实体类；通过 \`@TableName\`、\`@TableId\`、\`@TableField\` 及字段类型推断表名与列信息，用于表结构及字段表。
+  - **实体别名包（MyBatis/MyBatis-Plus）**：从 MyBatis/MyBatis-Plus 配置中读取 \`typeAliasesPackage\`（如 \`com.example.cms.entity\`），扫描该包下所有实体类；通过 \`@TableName\`、\`@TableId\`、\`@TableField\` 及字段类型推断表名与列信息，用于表结构及字段表。
   - **JPA 实体扫描**：扫描带 \`@Entity\` 或 \`@Table\` 注解的实体类（可从 \`@EntityScan\` 配置的包路径或 \`persistence.xml\` 中确定扫描范围，若无显式配置则扫描主包及子包下所有 \`@Entity\` 类）；通过 \`@Table(name=...)\` 推断表名（无 \`@Table\` 时按类名转下划线推断），\`@Id\` / \`@EmbeddedId\` 推断主键，\`@Column(name=...)\` 推断列名，\`@JoinColumn\` / \`@ManyToOne\` / \`@OneToMany\` 等推断表间关系，用于表结构、字段表及 ER 图。
   - **Mapper XML**：扫描项目中实际配置的 mapper 路径，从 **SQL 片段**（\`<select>\`/\`<insert>\`/\`<update>\`/\`<delete>\` 中的表名与列）、**ResultMap**（\`<resultMap>\` 的 \`type\` 与列映射）、以及**条件拼接**（\`<if>\`/\`<where>\` 中出现的列名）中提取表名与列名，用于补全表列表、字段列表；并根据 SQL 中的多表关联（JOIN、子查询引用）推断表间关系，用于 ER 图与表关系说明。
 - 合并策略：以实体 + DDL（若存在）为主表与字段来源；Mapper XML（MyBatis 项目）或 JPA 关系注解（JPA 项目）用于补全 DDL 中未出现的表/列，以及补充 ER 关系；同一表多来源时以 DDL 为准，无 DDL 时以实体 + Mapper/JPA 注解推断结果为准，并在说明中注明“部分表/关系由实体与 Mapper XML / JPA 注解推断”。

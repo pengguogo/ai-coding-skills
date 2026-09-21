@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{SYSTEM_TITLE} — 业务架构总览</title>
+  <link rel="stylesheet" href="../../common/case.css">
+  <script src="../../common/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: 'dark',
+      securityLevel: 'loose',
+      flowchart: { curve: 'basis' }
+    });
+    document.addEventListener('DOMContentLoaded', function () {
+      mermaid.run({ querySelector: '.mermaid' });
+    });
+  </script>
+</head>
+<body>
+  <div class="page">
+    <h1>{SYSTEM_TITLE} — 业务架构总览</h1>
+    <div class="sub">
+      {BADGE_TAGS}
+      <span>{OVERVIEW_SUBTITLE}</span>
+    </div>
+
+    <!-- ============ 系统概述与分层方法 ============ -->
+    <div class="biz-desc">
+      <div class="biz-title">📋 系统概述与分层方法</div>
+      {SYSTEM_OVERVIEW}
+      <ul>
+        {LAYER_DESC_ITEMS}
+      </ul>
+      <div class="note">{OVERVIEW_NOTE}</div>
+    </div>
+
+    <!-- ============ §1 系统分层架构与业务领域全景图 ============ -->
+    <h2>1. 系统分层架构与业务领域全景图</h2>
+    <div class="diagram">
+      <!--
+        §1 使用 .a5-* HTML 分层卡片。所有可见名称、说明、功能与链接均由占位符填充。
+        链接单元格式由生成步骤定义，例如：
+        <a class="a5-cell a5-core" href="{DOMAIN_LINK}">{DOMAIN_CELL_CONTENT}</a>
+        对已存在 {domain}/{domain}_arch.html 的领域，卡片内场景标签必须逐项使用详情页正式场景标题；
+        禁止缩写、改写，以及"含 N 个场景 / N 个用例 / 领域总览含……"等数量性描述。
+        尚无详情页时可列代码归纳子能力；详情页生成或场景调整后必须同步回写本卡片。
+      -->
+      <style>
+        .a5-wrap {
+          display: flex;
+          flex-direction: column;
+          gap: 0;
+          max-width: 1320px;
+          margin: 8px auto;
+          font-size: 13px;
+          text-align: left;
+        }
+        .a5-layer {
+          padding: 10px 12px;
+          background: #141922;
+          border: 1px solid #2b3345;
+          border-radius: 10px;
+        }
+        .a5-band { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+        .a5-no {
+          display: inline-flex;
+          flex: none;
+          align-items: center;
+          justify-content: center;
+          width: 22px; height: 22px;
+          color: #e8edf5;
+          font-size: 12px; font-weight: 700;
+          background: #2b3345;
+          border-radius: 50%;
+        }
+        .a5-title { color: #e8edf5; font-weight: 700; }
+        .a5-sub { margin-left: 6px; color: #8b93a3; font-size: 12px; font-weight: 400; }
+        .a5-cells { display: flex; flex-wrap: wrap; gap: 8px; }
+        .a5-cell {
+          display: flex; flex: 1; flex-direction: column; justify-content: center;
+          min-width: 130px; padding: 8px 10px;
+          color: #dde1ea; line-height: 1.55; text-align: center;
+          background: #1e2430; border: 1px solid #3a4256; border-radius: 8px;
+        }
+        .a5-cell b { display: block; margin-bottom: 2px; color: #eef2f8; font-size: 12px; }
+        .a5-cell small { color: #9aa3b2; font-size: 11px; }
+        .a5-arrow { align-self: center; padding: 4px 0; color: #7d8392; font-size: 12px; letter-spacing: 1px; }
+        .a5-ch  { background: #12222a; border-color: #22d3ee; }
+        .a5-bff { background: #152131; border-color: #4d8af0; }
+        .a5-core{ background: #2a2115; border-color: #facc15; }
+        .a5-etl { background: #231a2e; border-color: #a78bfa; }
+        .a5-acc { background: #15251f; border-color: #34d399; }
+        .a5-cmn { background: #1a1f2b; border-color: #7d8392; }
+        .a5-repo {
+          display: block; margin-top: 5px; padding-top: 4px;
+          color: #8093a4; font-size: 11px;
+          border-top: 1px dashed #333c4d;
+        }
+        .a5-grp { padding: 8px 10px; border: 1px dashed #4a5468; border-radius: 8px; }
+        .a5-grphead { margin-bottom: 6px; color: #9fb0c3; font-size: 12px; font-weight: 700; }
+        .a5-subs { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; margin: 5px 0 2px; }
+        .a5-sub2 {
+          padding: 2px 7px; color: #cfd6e3; font-size: 10.5px; line-height: 1.4;
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(255, 255, 255, 0.16); border-radius: 5px;
+        }
+        .a5-subs-v { flex-direction: column; align-items: stretch; gap: 4px; }
+        .a5-subs-v .a5-sub2 { text-align: center; }
+        .a5-body {
+          display: grid;
+          grid-template-columns: minmax(0, 2.6fr) minmax(0, 1.4fr);
+          column-gap: 8px; row-gap: 8px; align-items: stretch;
+        }
+        .a5-main, .a5-side { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+        .a5-side .a5-layer { flex: 1; display: flex; flex-direction: column; }
+        .a5-comlist { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+        .a5-comlist .a5-cell { flex: 1 1 0; justify-content: center; }
+      </style>
+
+      <div class="a5-wrap">
+        <!-- Layer 1 -->
+        <div class="a5-layer">
+          <div class="a5-band">
+            <span class="a5-no">{LAYER_1_MARK}</span>
+            <span class="a5-title">
+              {LAYER_1_TITLE}
+              <span class="a5-sub">{LAYER_1_DESCRIPTION}</span>
+            </span>
+          </div>
+          <div class="a5-cells">
+            {LAYER_1_CELLS}
+          </div>
+          {LAYER_1_AUXILIARY_BLOCK}
+        </div>
+
+        <div class="a5-arrow">{LAYER_1_TO_2_LABEL}</div>
+
+        <!-- Layer 2 -->
+        <div class="a5-layer" style="border-style:dashed; opacity:.85; border-color:#3a4256;">
+          <div class="a5-band">
+            <span class="a5-no">{LAYER_2_MARK}</span>
+            <span class="a5-title">
+              {LAYER_2_TITLE}
+              <span class="a5-sub">{LAYER_2_DESCRIPTION}</span>
+            </span>
+          </div>
+          <div class="a5-cells">
+            {LAYER_2_CELLS}
+          </div>
+          {LAYER_2_EVIDENCE}
+        </div>
+
+        <div class="a5-arrow">{LAYER_2_TO_3_LABEL}</div>
+
+        <!-- Layer 3 (main) + Layer 4 (side) -->
+        <div class="a5-body">
+          <div class="a5-main">
+            <div class="a5-layer">
+              <div class="a5-band">
+                <span class="a5-no">{LAYER_3_MARK}</span>
+                <span class="a5-title">
+                  {LAYER_3_TITLE}
+                  <span class="a5-sub">{LAYER_3_DESCRIPTION}</span>
+                </span>
+              </div>
+              <div class="a5-grp">
+                <div class="a5-grphead">{LAYER_3_GROUP_1_TITLE}</div>
+                <div class="a5-cells">
+                  {LAYER_3_GROUP_1_CELLS}
+                </div>
+              </div>
+              <div class="a5-grp" style="margin-top:8px;">
+                <div class="a5-grphead">{LAYER_3_GROUP_2_TITLE}</div>
+                <div class="a5-cells">
+                  {LAYER_3_GROUP_2_CELLS}
+                </div>
+              </div>
+              {LAYER_3_EVIDENCE}
+            </div>
+          </div>
+          <div class="a5-side">
+            <div class="a5-layer">
+              <div class="a5-band">
+                <span class="a5-no">{LAYER_4_MARK}</span>
+                <span class="a5-title">{LAYER_4_TITLE}</span>
+              </div>
+              <div class="a5-comlist">
+                {LAYER_4_CELLS}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="a5-arrow">{LAYER_3_TO_5_LABEL}</div>
+
+        <!-- Layer 5 -->
+        <div class="a5-layer" style="border-color:#a78bfa;">
+          <div class="a5-band">
+            <span class="a5-no">{LAYER_5_MARK}</span>
+            <span class="a5-title">
+              {LAYER_5_TITLE}
+              <span class="a5-sub">{LAYER_5_DESCRIPTION}</span>
+            </span>
+          </div>
+          <div class="a5-grp">
+            <div class="a5-grphead">{LAYER_5_GROUP_1_TITLE}</div>
+            <div class="a5-cells">
+              {LAYER_5_GROUP_1_CELLS}
+            </div>
+            {LAYER_5_GROUP_1_EVIDENCE}
+          </div>
+          <div class="a5-grp" style="margin-top:8px;">
+            <div class="a5-grphead">{LAYER_5_GROUP_2_TITLE}</div>
+            <div class="a5-cells">
+              {LAYER_5_GROUP_2_CELLS}
+            </div>
+            {LAYER_5_GROUP_2_EVIDENCE}
+          </div>
+        </div>
+      </div>
+      <div class="cap">{FIG1_CAPTION}</div>
+    </div>
+
+    <!-- ============ §2 端到端数据流 ============ -->
+    <h2>2. 端到端数据流：{DATAFLOW_SUBTITLE}</h2>
+    <p class="nav-hint">{DATAFLOW_HINT}</p>
+    <div class="diagram">
+      <div class="mermaid">
+        {DATAFLOW_MERMAID}
+      </div>
+      <div class="cap">{FIG2_CAPTION}</div>
+    </div>
+
+    <!-- ============ §3 业务生命周期 ============ -->
+    <h2>3. 业务生命周期</h2>
+    <div class="diagram">
+      <div class="mermaid">
+        {LIFECYCLE_MAIN_MERMAID}
+      </div>
+      <div class="cap">{FIG3_1_CAPTION}</div>
+    </div>
+    <p class="legend">{HORIZONTAL_LIFECYCLE_LEGEND}</p>
+    <div class="diagram">
+      <div class="mermaid">
+        {LIFECYCLE_HORIZONTAL_MERMAID}
+      </div>
+      <div class="cap">{FIG3_2_CAPTION}</div>
+    </div>
+
+    <!-- ============ §4 领域 × 代码仓库映射矩阵 ============ -->
+    <h2>4. 领域 × 代码仓库映射矩阵</h2>
+    <p class="legend">● 主要承载　○ 参与/次要。</p>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:150px">业务领域</th>
+          {REPO_MATRIX_HEADERS}
+          <th style="width:90px">维度</th>
+        </tr>
+      </thead>
+      <tbody>
+        {REPO_MATRIX_ROWS}
+      </tbody>
+    </table>
+    {MATRIX_NOTES}
+
+    <!-- ============ §5 各仓库业务领域清单（代码扫描依据）============ -->
+    <h2>5. 各仓库业务领域清单（代码扫描依据）</h2>
+    {REPO_DOMAIN_SECTIONS}
+
+    <!-- ============ §6 待确认事项 ============ -->
+    <h2>6. 待确认事项（需业务/架构方确认）</h2>
+    <p class="legend">以下为代码可见事实、但业务意图待明确的问题。</p>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:210px">待确认业务问题</th>
+          <th>说明与影响</th>
+        </tr>
+      </thead>
+      <tbody>
+        {OPEN_ISSUE_ROWS}
+      </tbody>
+    </table>
+
+    <div class="footer">
+      {FOOTER}
+    </div>
+  </div>
+</body>
+</html>

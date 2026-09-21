@@ -1,6 +1,6 @@
-# 前端工程与实现追溯（\`code-archive\` 字段参考）
+# 前端工程与实现追溯（`code-archive` 字段参考）
 
-> **定位**：本文件为 **\`project-archive\`** 技能包**内置参考**，用于 **\`code-archive.md\`** 中前端相关章节（实现路径、目录/路由/组件、\`frontend-project.md\` 增量说明等）的表格字段与深度。**不依赖** \`frontend-project-archive\` 技能；若与 \`frontend-project-archive\` 包内 \`archive_standard.md\` 同源，可由团队择机同步更新以保持字段一致。
+> **定位**：本文件为 **`project-archive`** 技能包**内置参考**，用于 **`code-archive.md`** 中前端相关章节（实现路径、目录/路由/组件、`frontend-project.md` 增量说明等）的表格字段与深度。**不依赖** `frontend-project-archive` 技能；若与 `frontend-project-archive` 包内 `archive_standard.md` 同源，可由团队择机同步更新以保持字段一致。
 
 ---
 
@@ -8,11 +8,11 @@
 
 ## 一、文档目的与定位
 
-归档文档用于记录单次前端需求的设计与实现归档，**以 \`frontend-design.md\`（通常由 \`fullstack-design\` 产出）为主要依据**，便于后续追溯、检索和审计。frontend-project.md 在 \`ocspec-<xxx>/knowledge/code/<项目名>/\` 下查找与更新。
+归档文档用于记录单次前端需求的设计与实现归档，**以 `frontend-design.md`（通常由 `fullstack-design` 产出）为主要依据**，便于后续追溯、检索和审计。frontend-project.md 在 `ocspec-<xxx>/knowledge/code/<项目名>/` 下查找与更新。
 
 **核心价值**：
 - 记录「需求 → 设计」的归档链路（若已编码则含「→ 实现」）
-- 根据设计文档的实现路径（及可选的实际实现）更新 frontend-project.md；更新时须按 \`unified_archive_outputs_standard.md\`「知识库融合更新标准流程」定义的 **5 步流程**将增量内容逐条定位到 frontend-project.md 中对应的业务功能模块、接口调用清单、目录结构等章节并就地融合，**不得**作为独立段落或附录直接追加到文档末尾
+- 根据设计文档的实现路径（及可选的实际实现）更新 frontend-project.md；更新时须按 `unified_archive_outputs_standard.md`「知识库融合更新标准流程」定义的 **5 步流程**将增量内容逐条定位到 frontend-project.md 中对应的业务功能模块、接口调用清单、目录结构等章节并就地融合，**不得**作为独立段落或附录直接追加到文档末尾
 - 为后续增量开发和问题排查提供依据
 
 ## 二、文档结构
@@ -21,18 +21,18 @@
 
 ### 1. 归档信息
 
-\`\`\`markdown
+```markdown
 ## 归档信息
 
-- **需求名称**: [需求名称，与 \`ocspec-<xxx>/requirements/<需求英文名>_<yyyymmdd>\` 目录名一致]
+- **需求名称**: [需求名称，与 `ocspec-<xxx>/requirements/<需求英文名>_<yyyymmdd>` 目录名一致]
 - **归档时间**: [YYYY-MM-DD HH:mm]
 - **关联需求文档**: [需求文档路径或说明]
 - **关联设计文档**: [设计文档路径或说明，必填]
-\`\`\`
+```
 
 ### 2. 需求摘要
 
-\`\`\`markdown
+```markdown
 ## 需求摘要
 
 ### 需求概述
@@ -45,11 +45,11 @@
 |-----|--------|----------|--------|
 | 1 | [需求项名称] | [模块] | P0/P1/P2 |
 | 2 | ... | ... | ... |
-\`\`\`
+```
 
 ### 3. 实现路径
 
-\`\`\`markdown
+```markdown
 ## 实现路径
 
 [从设计文档提取的实现路径概要，按功能点或模块列出设计中的实现顺序和主要内容]
@@ -57,13 +57,13 @@
 - 功能点 1: [实现路径描述]
 - 功能点 2: [实现路径描述]
 ...
-\`\`\`
+```
 
 ### 4. 实际实现内容
 
 若已拥有可确认的实现信息，则据此填写；若尚无可确认的实现信息则填「待编码后补充」。
 
-\`\`\`markdown
+```markdown
 ## 实际实现内容
 
 ### 实现概述
@@ -91,29 +91,29 @@
 ### 使用的现有资源
 
 [列出复用的组件、工具函数、样式等；若尚无可确认信息则填「无」]
-\`\`\`
+```
 
 ### 5. frontend-project.md 更新说明
 
 若无 frontend-project.md，填「无 frontend-project.md，本次未更新」。若有 frontend-project.md，按以下格式列出本次增量变更：
 
-\`\`\`markdown
+```markdown
 ## frontend-project.md 更新说明
 
 本次归档对 frontend-project.md 进行了以下更新：
 
 ### 业务功能模块
 
-- [新增/更新] 模块 \`[module-id]\`: [变更说明]
+- [新增/更新] 模块 `[module-id]`: [变更说明]
 
 ### 接口调用清单
 
-- [新增] 接口 \`[functionName]\`: [HTTP 方法] [接口路径] - [说明]
+- [新增] 接口 `[functionName]`: [HTTP 方法] [接口路径] - [说明]
 
 ### 目录结构说明
 
-- [新增] 目录/文件 \`[路径]\`: [说明]
-\`\`\`
+- [新增] 目录/文件 `[路径]`: [说明]
+```
 
 ## 三、内容标准
 
@@ -121,7 +121,7 @@
 - **需求摘要**：从需求文档提取，保持与需求文档一致
 - **实现路径**：从设计文档提取，**必填**，反映设计时的实现规划
 - **实际实现内容**：若已拥有可确认的实现信息则填写；若尚无可确认的实现信息则填「待编码后补充」
-- **frontend-project.md 更新说明**：若无 frontend-project.md 则填「无 frontend-project.md，本次未更新」；若有则清晰列出本次增量变更，且实际更新 frontend-project.md 时须按 \`unified_archive_outputs_standard.md\`「知识库融合更新标准流程」的 5 步流程将增量内容逐条定位到对应章节并就地融合，不得作为独立段落直接追加到文档末尾
+- **frontend-project.md 更新说明**：若无 frontend-project.md 则填「无 frontend-project.md，本次未更新」；若有则清晰列出本次增量变更，且实际更新 frontend-project.md 时须按 `unified_archive_outputs_standard.md`「知识库融合更新标准流程」的 5 步流程将增量内容逐条定位到对应章节并就地融合，不得作为独立段落直接追加到文档末尾
 
 ## 四、生成约束
 

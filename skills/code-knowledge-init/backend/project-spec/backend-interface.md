@@ -74,8 +74,8 @@
 ### 2.1 功能模块 \`{module}\`（二级标题）
 
 - **含义**：将**同一功能模块**下的多个 Controller 归入同一个二级标题下。
-- **命名来源（存量项目扫描）**：优先取 Controller **全限定包名**中，紧接在业务约定的 \`controller\` 包段之后的**下一级包名**作为模块名。  
-  - 示例：包 \`com.example.app.controller.budget.BiBudgetController\` → 模块目录 \`budget\`。  
+- **命名来源（存量项目扫描）**：优先取 Controller **全限定包名**中，紧接在业务约定的 \`controller\` 包段之后的**下一级包名**作为模块名。
+  - 示例：包 \`com.example.app.controller.budget.BiBudgetController\` → 模块目录 \`budget\`。
   - 若类直接位于 \`...controller\` 下无子包（无「下一级包名」），模块名取 **\`root\`**（或项目内统一约定为 \`default\`，全仓须一致）。
 
 ### 2.2 Controller 类（三级标题）
